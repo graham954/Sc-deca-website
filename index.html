@@ -1,0 +1,2944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SC DECA — Website Preview</title>
+
+<!--
+  ============================================================
+  LOCAL PREVIEW ONLY — NOT A PRODUCTION DELIVERABLE.
+
+  The site ships on Squarespace (see CLAUDE.md). The real
+  deliverables are:
+    header-injection.html   → Code Injection → Header
+    squarespace-custom.css  → Design → Custom CSS
+    blocks/*.html           → individual Code Blocks
+    content/*.md            → copy + layout instructions per page
+
+  This file exists only so you can see all 6 pages assembled
+  together in a browser before manually building them in the
+  Squarespace editor. It links the real squarespace-custom.css
+  and fetches the real blocks/*.html files, so anything you
+  see here reflects the actual deliverables — but the page
+  switching below uses a vanilla-JS router that has no
+  equivalent on Squarespace (Squarespace handles routing
+  natively once these pieces are placed in the editor).
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ===== inlined squarespace-custom.css ===== */
+/* ==========================================================================
+   SC DECA — Global Design System
+   Paste into: Design → Custom CSS
+
+   This file is the canonical source for the design system. The same
+   :root block is duplicated in header-injection.html so Code Block
+   widgets always have the variables available — if you change a color,
+   spacing, or shadow value, update both files.
+
+   Sections:
+     1. Tokens (:root)
+     2. Reset & base typography
+     3. Header / navigation
+     4. Buttons
+     5. Section backgrounds (sunset gradient + grain)
+     6. Cards
+     7. Grids
+     8. Badges
+     9. Forms
+     10. Motion & micro-interactions
+     11. Footer / social directory
+     12. Responsive
+   ========================================================================== */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  --deca-blue: #0072CE;
+  --deca-blue-dark: #00529A;
+  --deca-gold: #85754E;
+  --deca-silver: #8C9091;
+  --slate: #0F172A;
+  --slate-soft: #64748B;
+  --white: #F8FAFC;
+
+  --pink: #E55B75;
+  --sc-blue: #7A96D6;
+  --peach: #F29D82;
+  --lavender: #9F83C1;
+  --gold-warm: #ECC085;
+
+  --sunset-gradient: linear-gradient(135deg, #9F83C1 0%, #E55B75 55%, #ECC085 100%);
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-10: 80px;
+
+  --shadow-elevated: 0 4px 24px rgba(15, 23, 42, 0.10);
+  --shadow-floating: 0 12px 40px rgba(15, 23, 42, 0.16), 0 2px 8px rgba(15, 23, 42, 0.08);
+  --shadow-blue-tint: 0 8px 28px rgba(0, 114, 206, 0.18);
+  --shadow-pink-tint: 0 8px 28px rgba(229, 91, 117, 0.22);
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Source Sans Pro', sans-serif;
+}
+
+/* ---------- 2. Reset & base typography ---------- */
+body, .sqs-block-content p, .sqs-block-content li {
+  font-family: var(--font-body);
+  color: var(--slate-soft);
+  line-height: 1.7;
+  font-size: 17px;
+}
+
+h1, h2, h3, h4,
+.sqs-block-content h1, .sqs-block-content h2, .sqs-block-content h3, .sqs-block-content h4 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--slate);
+}
+
+h1 { font-weight: 900; font-size: clamp(2.4rem, 5vw, 4.2rem); }
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.8rem); }
+h3 { font-size: clamp(1.4rem, 2.2vw, 1.8rem); }
+
+a { color: var(--deca-blue); text-decoration: none; }
+a:hover { color: var(--deca-blue-dark); }
+a:focus-visible { outline: 2px solid var(--deca-blue); outline-offset: 3px; border-radius: 2px; }
+
+/* Eyebrow / label text used above headings sitewide */
+.eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pink);
+  display: inline-block;
+  margin-bottom: var(--space-1);
+}
+
+/* ---------- 3. Header / navigation ---------- */
+.site-header,
+.header-nav {
+  font-family: var(--font-heading);
+  background-color: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(10px);
+}
+
+.header-nav-item a,
+.header-nav-folder-title {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--slate);
+  transition: color 0.2s var(--ease-standard);
+}
+
+.header-nav-item a:hover,
+.header-nav-folder-title:hover {
+  color: var(--deca-blue);
+}
+
+.header-nav-item--active a {
+  color: var(--deca-blue);
+  position: relative;
+}
+
+.header-nav-item--active a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--sunset-gradient);
+}
+
+/* On dark/scrolled header state, Squarespace adds a "solid"/dark class — keep DECA blue logo on light, never the reverse */
+.site-header.header--top-fixed.header--blend .header-title-logo img {
+  filter: none;
+}
+
+/* ---------- 4. Buttons ---------- */
+.sqs-block-button-element,
+.btn-primary {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  border-radius: 10px !important;
+  padding: 14px 28px !important;
+  background-color: var(--deca-blue) !important;
+  border-color: var(--deca-blue) !important;
+  color: var(--white) !important;
+  box-shadow: var(--shadow-blue-tint);
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-standard);
+}
+
+.sqs-block-button-element:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(0, 114, 206, 0.28);
+  background-color: var(--deca-blue-dark) !important;
+}
+
+.sqs-block-button-element:active,
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.sqs-block-button-element:focus-visible,
+.btn-primary:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 114, 206, 0.35);
+}
+
+/* Secondary CTA — sunset accent, outline style. Add class "sqs-block-button-element--secondary" via the button block's custom CSS class field */
+.sqs-block-button-element.sqs-block-button-element--secondary {
+  background-color: transparent !important;
+  border: 2px solid var(--pink) !important;
+  color: var(--pink) !important;
+  box-shadow: none;
+}
+
+.sqs-block-button-element.sqs-block-button-element--secondary:hover {
+  background-color: var(--pink) !important;
+  color: var(--white) !important;
+  box-shadow: var(--shadow-pink-tint);
+}
+
+/* On the sunset gradient, a pink outline on a pink-toned background fails
+   AA contrast — switch the secondary CTA to a white outline there instead. */
+.bg-sunset-gradient .sqs-block-button-element.sqs-block-button-element--secondary {
+  border-color: var(--white) !important;
+  color: var(--white) !important;
+}
+.bg-sunset-gradient .sqs-block-button-element.sqs-block-button-element--secondary:hover {
+  background-color: var(--white) !important;
+  color: var(--pink) !important;
+  box-shadow: 0 14px 32px rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- 5. Section backgrounds ---------- */
+/* Apply via the Section's "Custom CSS Class" field in Squarespace's section settings */
+
+.bg-sunset-gradient {
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255,255,255,0.18) 0%, transparent 45%),
+    var(--sunset-gradient);
+  position: relative;
+  isolation: isolate;
+}
+
+/* SVG grain texture overlay for hero/banner depth */
+.bg-sunset-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* AA-contrast rule: gradient sections may ONLY use white or slate text, never mid-tone gray */
+.bg-sunset-gradient h1, .bg-sunset-gradient h2, .bg-sunset-gradient h3,
+.bg-sunset-gradient .sqs-block-content,
+.bg-sunset-gradient p {
+  color: var(--white);
+  position: relative;
+  z-index: 1;
+}
+
+.bg-sunset-gradient .eyebrow {
+  color: var(--white);
+  opacity: 0.85;
+}
+
+.bg-slate {
+  background-color: var(--slate);
+}
+.bg-slate h1, .bg-slate h2, .bg-slate h3, .bg-slate p, .bg-slate .sqs-block-content {
+  color: var(--white);
+}
+
+.bg-soft {
+  background-color: #FFFFFF;
+  background-image: radial-gradient(circle at 100% 0%, rgba(0,114,206,0.05) 0%, transparent 50%);
+}
+
+/* ---------- 6. Cards ---------- */
+/* Layering system: base -> elevated (shadow) -> floating (shadow + blur border) */
+.card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: var(--space-4);
+  box-shadow: var(--shadow-elevated);
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-standard);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-floating);
+}
+
+.card-floating {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-floating);
+}
+
+.card-accent-top {
+  border-top: 4px solid var(--pink);
+}
+.card-accent-top--blue { border-top-color: var(--deca-blue); }
+.card-accent-top--gold { border-top-color: var(--deca-gold); }
+
+/* Premium badge card variant — Twilight Lavender per the palette */
+.card-premium {
+  background: linear-gradient(160deg, rgba(159,131,193,0.12), rgba(255,255,255,0.9));
+  border: 1px solid rgba(159,131,193,0.35);
+}
+
+/* ---------- 7. Grids ---------- */
+.grid-2, .grid-3, .grid-4 {
+  display: grid;
+  gap: var(--space-3);
+}
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ---------- 8. Badges ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.badge-gold {
+  background: linear-gradient(135deg, var(--gold-warm), var(--deca-gold));
+  color: var(--slate);
+}
+.badge-pink {
+  background: rgba(229, 91, 117, 0.12);
+  color: var(--pink);
+  border: 1px solid rgba(229, 91, 117, 0.3);
+}
+.badge-blue {
+  background: rgba(0, 114, 206, 0.1);
+  color: var(--deca-blue-dark);
+  border: 1px solid rgba(0, 114, 206, 0.25);
+}
+
+/* ---------- 9. Forms ---------- */
+.form-wrapper input[type="text"],
+.form-wrapper input[type="email"],
+.form-wrapper input[type="tel"],
+.form-wrapper select,
+.form-wrapper textarea {
+  font-family: var(--font-body);
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  transition: border-color 0.2s var(--ease-standard), box-shadow 0.2s var(--ease-standard);
+}
+
+.form-wrapper input:focus,
+.form-wrapper select:focus,
+.form-wrapper textarea:focus {
+  border-color: var(--deca-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 206, 0.15);
+  outline: none;
+}
+
+/* ---------- 10. Motion & micro-interactions ---------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fadeUp 0.6s var(--ease-spring) both;
+}
+.fade-up-delay-1 { animation-delay: 0.08s; }
+.fade-up-delay-2 { animation-delay: 0.16s; }
+.fade-up-delay-3 { animation-delay: 0.24s; }
+.fade-up-delay-4 { animation-delay: 0.32s; }
+
+/* Reduced-motion: students at conferences and motion-sensitive users get
+   the content with no entrance animation or hover lift — never a blank,
+   pre-animation state. Non-negotiable per the accessibility brief. */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up,
+  .fade-up-delay-1, .fade-up-delay-2, .fade-up-delay-3, .fade-up-delay-4 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .card,
+  .sqs-block-button-element,
+  .btn-primary,
+  .footer-social-row a {
+    transition: none !important;
+  }
+  .card:hover,
+  .sqs-block-button-element:hover,
+  .btn-primary:hover,
+  .footer-social-row a:hover {
+    transform: none !important;
+  }
+}
+
+/* ---------- 11. Footer / social directory ---------- */
+.footer-social-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.footer-social-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  color: var(--white);
+  transition: transform 0.25s var(--ease-spring), background-color 0.2s var(--ease-standard);
+}
+.footer-social-row a:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: var(--sunset-gradient);
+}
+
+/* ---------- 12. Responsive ---------- */
+@media (max-width: 900px) {
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  h1 { font-size: clamp(2rem, 9vw, 2.8rem); }
+}
+
+</style>
+
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--white); }
+  img { max-width: 100%; display: block; }
+
+  /* ---------- Preview-only notice ribbon ---------- */
+  .preview-ribbon {
+    background: var(--slate);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    text-align: center;
+    padding: 8px 16px;
+  }
+  .preview-ribbon strong { color: var(--gold-warm); }
+
+  /* ---------- Site header / nav ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(248,250,252,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .site-header__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+  }
+  .site-header__brand { display: flex; align-items: center; gap: 12px; }
+  .site-header__brand img { height: 40px; width: auto; }
+
+  /* ---------- Wordmark (preview stand-in for the DECA logo asset) ----------
+     Squarespace gets the real horizontal "SC DECA" logo dropped into its logo
+     slot. For local QA this typeset lockup reads as finished branding instead
+     of a gray placeholder box. */
+  .brand-wordmark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand-wordmark__mark {
+    width: 24px; height: 24px;
+    background: var(--sunset-gradient);
+    border-radius: 2px;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(229,91,117,0.35);
+  }
+  .brand-wordmark__text {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--deca-blue);
+  }
+  .brand-wordmark__text em { font-style: normal; color: var(--slate); }
+  .site-footer .brand-wordmark__text { color: #fff; }
+  .site-footer .brand-wordmark__text em { color: rgba(255,255,255,0.75); }
+  .header-nav {
+    display: flex;
+    gap: 28px;
+    background: none;
+  }
+  .header-nav-item a {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--slate);
+    cursor: pointer;
+    padding: 6px 0;
+    position: relative;
+  }
+  .header-nav-item a:hover { color: var(--deca-blue); }
+  .header-nav-item.header-nav-item--active a { color: var(--deca-blue); }
+  .header-nav-item.header-nav-item--active a::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -4px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--sunset-gradient);
+  }
+  .site-header__toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .site-header__toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--slate);
+    margin: 5px 0;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 860px) {
+    .header-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: #fff;
+      flex-direction: column;
+      gap: 0;
+      border-bottom: 1px solid #E2E8F0;
+      box-shadow: var(--shadow-elevated);
+    }
+    .header-nav.is-open { display: flex; }
+    .header-nav-item a { display: block; padding: 14px 24px; }
+    .header-nav-item.header-nav-item--active a::after { display: none; }
+    .site-header__toggle { display: block; }
+  }
+
+  /* ---------- Page sections ---------- */
+  .page { display: none; }
+  .page.is-active { display: block; }
+
+  .page-banner {
+    padding: var(--space-10) var(--space-3) var(--space-8);
+    text-align: center;
+  }
+  .page-banner h1 { margin: 8px 0 16px; }
+  .page-banner p { max-width: 640px; margin: 0 auto; font-size: 19px; }
+
+  .section {
+    padding: var(--space-8) var(--space-3);
+  }
+  .section__inner { max-width: 1180px; margin: 0 auto; }
+  .section__head { text-align: center; max-width: 640px; margin: 0 auto var(--space-6); }
+  .section__head h2 { margin: 8px 0 12px; }
+  .section__head p { color: var(--slate-soft); line-height: 1.7; }
+  .freshness-tag {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--slate-soft);
+    background: #F1F5F9;
+    border-radius: 999px;
+    padding: 4px 12px;
+  }
+
+  /* ---------- Home hero photo collage ---------- */
+  /* 3 tiles, not 5 — a calmer asymmetric collage reads as designed;
+     a wall of identical placeholder boxes reads as unfinished. */
+  .hero-collage {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 120px 120px;
+    gap: var(--space-2);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-3) 0;
+  }
+  .hero-collage__item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-elevated);
+  }
+  .hero-collage__item img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-collage__item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15,23,42,0.45), transparent 60%);
+  }
+  .hero-collage__item--a { grid-column: 1 / 3; grid-row: 1 / 3; }
+  .hero-collage__item--b { grid-column: 3 / 7; grid-row: 1 / 2; }
+  .hero-collage__item--c { grid-column: 3 / 7; grid-row: 2 / 3; }
+
+  @media (max-width: 700px) {
+    .hero-collage { grid-template-columns: repeat(2, 1fr); grid-template-rows: 140px 110px 110px; }
+    .hero-collage__item--a { grid-column: 1 / 3; grid-row: 1 / 2; }
+    .hero-collage__item--b { grid-column: 1 / 2; grid-row: 2 / 3; }
+    .hero-collage__item--c { grid-column: 2 / 3; grid-row: 2 / 3; }
+  }
+
+  .hero-band { text-align: center; padding: var(--space-8) var(--space-3); margin-top: var(--space-6); border-radius: 0; }
+  .hero-band .eyebrow { display: inline-block; margin-bottom: 8px; }
+  .hero-band h1 { margin: 0 0 16px; }
+  .hero-band p.lede { max-width: 580px; margin: 0 auto var(--space-4); font-size: 19px; }
+  .hero-band__ctas { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+  /* ---------- Closing CTA banner (home page) ---------- */
+  .closing-banner { text-align: center; padding: var(--space-8) var(--space-3); }
+  .closing-banner h2 { margin: 0 0 12px; }
+  .closing-banner p { max-width: 520px; margin: 0 auto var(--space-4); font-size: 17px; }
+  .closing-banner__ctas { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+  /* ---------- Mission & Vision (plain text, no card shadow — breaks the all-cards rhythm) ---------- */
+  .mission-vision {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-6);
+    max-width: 920px;
+    margin: 0 auto;
+    align-items: center;
+  }
+  .mission-vision__col p { font-size: 17px; line-height: 1.8; margin: 8px 0 0; }
+  .mission-vision__divider { width: 1px; height: 64px; background: #E2E8F0; }
+  @media (max-width: 700px) {
+    .mission-vision { grid-template-columns: 1fr; gap: var(--space-4); }
+    .mission-vision__divider { width: 64px; height: 1px; margin: 0 auto; }
+  }
+
+  /* ---------- Welcome (no "blue thingy") ---------- */
+  .welcome-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: var(--space-8);
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .welcome-grid img { border-radius: 20px; box-shadow: var(--shadow-floating); }
+  .welcome-grid__copy p { font-size: 17px; line-height: 1.8; }
+  @media (max-width: 860px) {
+    .welcome-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Resource / staff / officer card content helpers ---------- */
+  .card img.avatar { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; }
+  .card .resource-icon { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 14px; }
+  /* Line-icon tile — replaces gray placeholder icon boxes. DECA-blue glyph
+     on a 10%-blue tile keeps icons structural (blue), not decorative. */
+  .icon-tile {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(0,114,206,0.10);
+    margin-bottom: 16px;
+  }
+  .icon-tile svg {
+    width: 24px; height: 24px;
+    fill: none; stroke: var(--deca-blue);
+    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .card h3 { margin: 0 0 8px; }
+  .card p { margin: 0; font-size: 15px; }
+  .card .card-link { display: inline-block; margin-top: 14px; font-family: var(--font-heading); font-weight: 700; font-size: 14px; }
+
+  /* ---------- Progress bar (community service) ---------- */
+  .progress-block { max-width: 560px; margin: 0 auto; text-align: center; }
+  .progress-block__bar { height: 14px; border-radius: 999px; background: #E2E8F0; overflow: hidden; margin: 18px 0 10px; }
+  .progress-block__fill { height: 100%; width: 62%; border-radius: 999px; background: var(--sunset-gradient); }
+  .progress-block__label { font-family: var(--font-heading); font-weight: 700; font-size: 14px; color: var(--slate-soft); }
+
+  /* ---------- Timeline (calendar) ---------- */
+  .timeline { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
+  .timeline__item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .timeline__item:last-child { border-bottom: none; }
+  .timeline__date { font-family: var(--font-heading); font-weight: 800; color: var(--deca-blue); font-size: 14px; }
+  .timeline__title { font-family: var(--font-heading); font-weight: 700; color: var(--slate); margin-bottom: 4px; }
+  .timeline__note { color: var(--slate-soft); font-size: 14px; }
+
+  /* ---------- Sponsor tiers ---------- */
+  .sponsor-tier { text-align: center; margin-bottom: var(--space-6); }
+  .sponsor-tier__label { margin-bottom: 24px; }
+  .sponsor-tier__row { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+  .sponsor-tier__row img { border-radius: 10px; box-shadow: var(--shadow-elevated); }
+
+  /* ---------- Comms channel cards ---------- */
+  .comm-card { display: flex; gap: 20px; align-items: flex-start; }
+  .comm-card__icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 64px; height: 64px; border-radius: 16px;
+    background: rgba(0,114,206,0.10); flex-shrink: 0;
+  }
+  .comm-card__icon svg { width: 30px; height: 30px; fill: none; stroke: var(--deca-blue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- Blockquote testimonial ---------- */
+  blockquote { margin: 0; font-size: 17px; line-height: 1.7; color: var(--slate); font-style: italic; }
+  blockquote cite { display: block; margin-top: 14px; font-family: var(--font-heading); font-weight: 700; font-size: 12px; font-style: normal; color: var(--slate-soft); }
+
+  /* ---------- Footer ---------- */
+  .site-footer { padding: var(--space-8) var(--space-3) var(--space-4); }
+  .site-footer__inner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: var(--space-6); }
+  .site-footer h4 { font-family: var(--font-heading); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin: 0 0 16px; }
+  .site-footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .site-footer a { color: rgba(255,255,255,0.85); font-size: 14px; }
+  .site-footer a:hover { color: var(--gold-warm); }
+  .site-footer__bottom { max-width: 1180px; margin: var(--space-6) auto 0; padding-top: var(--space-3); border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  @media (max-width: 760px) { .site-footer__inner { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">Local preview build — assembles the real Squarespace deliverables into one file. <strong>Not for production.</strong> Build the actual pages in Squarespace using <code>content/*.md</code> + <code>blocks/</code>.</div>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <div class="site-header__brand">
+      <a href="#" class="brand-wordmark" data-page-link="home" aria-label="SC DECA home">
+        <span class="brand-wordmark__mark" aria-hidden="true"></span>
+        <span class="brand-wordmark__text">SC <em>DECA</em></span>
+      </a>
+    </div>
+    <nav class="header-nav" id="main-nav">
+      <div class="header-nav-item header-nav-item--active"><a data-page="home">Home</a></div>
+      <div class="header-nav-item"><a data-page="about">About</a></div>
+      <div class="header-nav-item"><a data-page="advisors">Advisors</a></div>
+      <div class="header-nav-item"><a data-page="chapter-management">Chapter Management</a></div>
+      <div class="header-nav-item"><a data-page="competition-prep">Competition Prep</a></div>
+      <div class="header-nav-item"><a data-page="get-involved">Get Involved</a></div>
+    </nav>
+    <button class="site-header__toggle" id="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================== HOME ============================== -->
+<section class="page is-active" id="page-home">
+
+  <div class="hero-collage fade-up">
+    <div class="hero-collage__item hero-collage__item--a"><img src="https://placehold.co/600x800/F3D9C7/715E8A?text=Student+Photo+1" alt="SC DECA students posing with a regional competition trophy"></div>
+    <div class="hero-collage__item hero-collage__item--b"><img src="https://placehold.co/900x400/ECE8F3/9D7E54?text=Student+Photo+2" alt="SC DECA students in business attire networking at a conference"></div>
+    <div class="hero-collage__item hero-collage__item--c"><img src="https://placehold.co/900x400/F9ECEA/715E8A?text=Student+Photo+3" alt="An SC DECA chapter advisor coaching students before a roleplay event"></div>
+  </div>
+
+  <div class="hero-band bg-sunset-gradient">
+    <span class="eyebrow">2026-2027 SC DECA Theme</span>
+    <h1>Seize the Moment.</h1>
+    <p class="lede">Marketing. Finance. Hospitality. Management. Over 3,000 South Carolina students are building real business skills before they graduate.</p>
+    <div class="hero-band__ctas">
+      <a href="#" class="sqs-block-button-element" data-page-link="about">About SC DECA</a>
+      <a href="#" class="sqs-block-button-element sqs-block-button-element--secondary" id="what-is-deca-btn">What is DECA?</a>
+    </div>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="welcome-grid">
+      <img src="https://placehold.co/640x720/DCE6F7/00529A?text=Student+Photo" alt="A South Carolina DECA student presenting during a competitive event">
+      <div class="welcome-grid__copy fade-up">
+        <h2>Business class shouldn't feel theoretical.</h2>
+        <p>South Carolina DECA has prepared emerging leaders and entrepreneurs in marketing, finance, hospitality, and management since 1943. Today, more than 50 chapters and 3,000+ members compete, network, and build real skills — backed by a curriculum that ties directly into the classroom, not around it.</p>
+        <a href="#" class="card-link" data-page-link="about" style="color:var(--deca-blue); font-family:var(--font-heading); font-weight:700;">Learn Our Story →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">Three Ways In</span>
+        <h2>Find Your Hub</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card card-accent-top fade-up">
+          <span class="badge badge-pink">Students</span>
+          <h3 style="margin-top:12px;">Students Start Here</h3>
+          <p>Find your event, practice roleplays, and prep for SCDC.</p>
+          <a href="#" class="card-link" data-page-link="competition-prep">Get Started →</a>
+        </div>
+        <div class="card card-accent-top--blue fade-up fade-up-delay-1">
+          <span class="badge badge-blue">Advisors</span>
+          <h3 style="margin-top:12px;">Advisors Start Here</h3>
+          <p>Checklists, fundraising guides, and everything to run your chapter.</p>
+          <a href="#" class="card-link" data-page-link="advisors">Get Started →</a>
+        </div>
+        <div class="card card-accent-top--gold fade-up fade-up-delay-2">
+          <span class="badge badge-gold">Alumni</span>
+          <h3 style="margin-top:12px;">Professionals &amp; Alumni</h3>
+          <p>Judge an event, mentor a chapter, or sponsor the next generation.</p>
+          <a href="#" class="card-link" data-page-link="get-involved">Get Started →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="section__inner">
+<!--
+  SC DECA — Sponsors Showcase (Home page)
+  Drop into a Code Block in the "Thank You to Our Sponsors" section.
+  Self-contained: scoped styles + script, no external dependencies
+  beyond the fonts/vars from header-injection.html.
+
+  Until real sponsor logos are confirmed, this scrolls sponsorship-TIER
+  chips (Presenting / Gold / Silver / Community Partner) instead of
+  generic "Sponsor N" placeholder boxes — it reads as "here's where your
+  logo goes, by tier" rather than an unfinished placeholder wall. Swap
+  each chip for a real <img> logo tag as sponsors are confirmed, tier by
+  tier; keep logos on a transparent/white background once added.
+-->
+<div class="sq-sponsors-widget">
+  <div class="sq-sponsors-widget__head">
+    <h2 class="sq-sponsors-widget__title">Thank You to Our Sponsors</h2>
+    <p class="sq-sponsors-widget__sub">South Carolina DECA's competitive events, scholarships, and state conferences run on the generosity of these partners.</p>
+  </div>
+
+  <div class="sq-sponsors-widget__track-wrap">
+    <div class="sq-sponsors-widget__track">
+      <div class="sq-sponsors-widget__row" id="sq-sponsors-row">
+        <!-- Replace each chip with a real <img> logo tag as sponsors are confirmed -->
+        <span class="sq-sponsors-widget__chip sq-sponsors-widget__chip--gold">Presenting Sponsor</span>
+        <span class="sq-sponsors-widget__chip sq-sponsors-widget__chip--gold">Gold Sponsor</span>
+        <span class="sq-sponsors-widget__chip sq-sponsors-widget__chip--blue">Silver Sponsor</span>
+        <span class="sq-sponsors-widget__chip sq-sponsors-widget__chip--blue">Silver Sponsor</span>
+        <span class="sq-sponsors-widget__chip sq-sponsors-widget__chip--pink">Community Partner</span>
+        <span class="sq-sponsors-widget__chip sq-sponsors-widget__chip--pink">Community Partner</span>
+      </div>
+    </div>
+  </div>
+
+  <a href="#" class="sq-sponsors-widget__cta">Become a Sponsor →</a>
+</div>
+
+<style>
+  .sq-sponsors-widget {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .sq-sponsors-widget__title {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    color: var(--slate, #0F172A);
+    margin: 8px 0;
+  }
+
+  .sq-sponsors-widget__sub {
+    max-width: 560px;
+    margin: 0 auto 32px;
+    color: var(--slate-soft, #64748B);
+    line-height: 1.7;
+  }
+
+  .sq-sponsors-widget__track-wrap {
+    position: relative;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .sq-sponsors-widget__track {
+    overflow: hidden;
+  }
+
+  .sq-sponsors-widget__row {
+    display: flex;
+    align-items: center;
+    gap: 56px;
+    width: max-content;
+    animation: sq-sponsors-scroll 28s linear infinite;
+  }
+
+  .sq-sponsors-widget__chip {
+    display: inline-flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  }
+  .sq-sponsors-widget__chip:hover { transform: translateY(-3px); }
+  .sq-sponsors-widget__chip--gold {
+    background: linear-gradient(135deg, var(--gold-warm, #ECC085), var(--deca-gold, #85754E));
+    color: var(--slate, #0F172A);
+  }
+  .sq-sponsors-widget__chip--blue {
+    background: rgba(0, 114, 206, 0.1);
+    color: var(--deca-blue-dark, #00529A);
+    border: 1px solid rgba(0, 114, 206, 0.25);
+  }
+  .sq-sponsors-widget__chip--pink {
+    background: rgba(229, 91, 117, 0.12);
+    color: var(--pink, #E55B75);
+    border: 1px solid rgba(229, 91, 117, 0.3);
+  }
+
+  @keyframes sq-sponsors-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .sq-sponsors-widget__cta {
+    display: inline-block;
+    margin-top: 32px;
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    border-radius: 10px;
+    padding: 14px 28px;
+    background-color: var(--deca-blue, #0072CE);
+    color: var(--white, #F8FAFC);
+    box-shadow: 0 8px 28px rgba(0, 114, 206, 0.18);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+  .sq-sponsors-widget__cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(0, 114, 206, 0.28);
+    background-color: var(--deca-blue-dark, #00529A);
+  }
+  .sq-sponsors-widget__cta:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sq-sponsors-widget__row { animation: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    // Duplicate the logo row once so the marquee loops seamlessly at -50%.
+    var row = document.getElementById('sq-sponsors-row');
+    if (row && !row.dataset.cloned) {
+      row.insertAdjacentHTML('beforeend', row.innerHTML);
+      row.dataset.cloned = 'true';
+    }
+  })();
+</script>
+
+</div>
+  </div>
+
+  <div class="section bg-sunset-gradient closing-banner">
+    <h2>Your Chapter's Next Win Starts Here.</h2>
+    <p>Join 3,000+ students, advisors, and partners building SC DECA's future.</p>
+    <div class="closing-banner__ctas">
+      <a href="#" class="sqs-block-button-element" data-page-link="get-involved">Volunteer Today →</a>
+      <a href="#" class="sqs-block-button-element sqs-block-button-element--secondary" data-page-link="get-involved">Become a Sponsor →</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== ABOUT ============================== -->
+<section class="page" id="page-about">
+
+  <div class="page-banner bg-sunset-gradient">
+    <span class="eyebrow">Since 1943</span>
+    <h1>83 Years of Building Leaders</h1>
+    <p>South Carolina DECA prepares emerging leaders and entrepreneurs in marketing, finance, hospitality, and management — and has since 1943.</p>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="mission-vision fade-up">
+      <div class="mission-vision__col">
+        <span class="eyebrow">Mission</span>
+        <p>South Carolina DECA organizes competitive events and leadership initiatives that uphold our values of competency, teamwork, integrity, and innovation.</p>
+      </div>
+      <div class="mission-vision__divider" aria-hidden="true"></div>
+      <div class="mission-vision__col">
+        <span class="eyebrow">Vision</span>
+        <p>South Carolina DECA motivates young leaders to find success in their passion within the business world.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">Leadership</span>
+        <h2>SC DECA Staff</h2>
+        <span class="freshness-tag">Updated for 2025-2026</span>
+      </div>
+      <div class="grid-2" style="max-width:680px; margin:0 auto;">
+        <div class="card fade-up">
+          <img class="avatar" src="https://placehold.co/176x176?text=Photo" alt="Ginger Hill">
+          <h3>Ginger Hill</h3>
+          <p>Executive Director</p>
+          <a href="mailto:director@scdeca.org" class="card-link" style="color:var(--deca-blue);">director@scdeca.org</a>
+        </div>
+        <div class="card card-premium fade-up fade-up-delay-1">
+          <h3>More Team Members Coming Soon</h3>
+          <p>Membership, conference, and sponsorship roles are being filled for 2025-2026. Check back soon, or reach out directly.</p>
+          <a href="mailto:director@scdeca.org" class="card-link" style="color:var(--deca-blue);">Contact the State Office →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section bg-soft">
+<!--
+  SC DECA — Organizational Structure (About page)
+  Drop into a Code Block in the "Organizational Structure" section.
+  CSS-based hierarchy tree, no library. Layout inspired by azdeca.org:
+  a top node, a tier of board/committee roles, and a bottom tier
+  representing the regional chapter network. Nodes expand on click
+  to reveal a one-line description — keeps the section compact by
+  default since there are 50+ chapters feeding into it.
+
+  Replace placeholder role names/regions with the real SC DECA board
+  structure when available.
+-->
+<div class="sq-orgchart-widget">
+  <div class="sq-orgchart-widget__head">
+    <h2 class="sq-orgchart-widget__title">SC DECA Structure</h2>
+    <p class="sq-orgchart-widget__sub">Tap a role to learn what it does. Every chapter in the state connects up through this structure.</p>
+  </div>
+
+  <div class="sq-orgchart-widget__tree">
+    <div class="sq-orgchart-widget__tier sq-orgchart-widget__tier--top">
+      <button class="sq-orgchart-widget__node sq-orgchart-widget__node--apex" data-desc="Oversees statewide strategy, staff, and the relationship with DECA Inc.">
+        Executive Director<span>Ginger Hill</span>
+      </button>
+    </div>
+
+    <div class="sq-orgchart-widget__connector" aria-hidden="true"></div>
+
+    <div class="sq-orgchart-widget__tier sq-orgchart-widget__tier--board">
+      <button class="sq-orgchart-widget__node" data-desc="Sets policy, approves budgets, and governs the association alongside the Executive Director.">
+        Board of Directors
+      </button>
+      <button class="sq-orgchart-widget__node" data-desc="Current student leaders who represent members at conferences and on statewide initiatives.">
+        State Officer Team
+      </button>
+      <button class="sq-orgchart-widget__node" data-desc="Coordinates SCDC, EPIC, and developmental workshops across the state calendar.">
+        Conference Committee
+      </button>
+      <button class="sq-orgchart-widget__node" data-desc="Recruits and stewards sponsors, alumni judges, and community partners.">
+        Sponsorship &amp; Alumni Relations
+      </button>
+    </div>
+
+    <div class="sq-orgchart-widget__connector" aria-hidden="true"></div>
+
+    <div class="sq-orgchart-widget__tier sq-orgchart-widget__tier--chapters">
+      <button class="sq-orgchart-widget__node sq-orgchart-widget__node--region" data-desc="Chapters across the Upstate region, supported directly by their advisors.">
+        Upstate Chapters
+      </button>
+      <button class="sq-orgchart-widget__node sq-orgchart-widget__node--region" data-desc="Chapters across the Midlands region, supported directly by their advisors.">
+        Midlands Chapters
+      </button>
+      <button class="sq-orgchart-widget__node sq-orgchart-widget__node--region" data-desc="Chapters across the Lowcountry region, supported directly by their advisors.">
+        Lowcountry Chapters
+      </button>
+      <button class="sq-orgchart-widget__node sq-orgchart-widget__node--region" data-desc="Chapters across the Pee Dee region, supported directly by their advisors.">
+        Pee Dee Chapters
+      </button>
+    </div>
+  </div>
+
+  <p class="sq-orgchart-widget__detail" id="sq-orgchart-detail">Select a role above to see what it's responsible for.</p>
+</div>
+
+<style>
+  .sq-orgchart-widget {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    text-align: center;
+    padding: 24px 0;
+  }
+
+  .sq-orgchart-widget__title {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    color: var(--slate, #0F172A);
+    margin: 8px 0;
+  }
+
+  .sq-orgchart-widget__sub {
+    max-width: 520px;
+    margin: 0 auto 40px;
+    color: var(--slate-soft, #64748B);
+    line-height: 1.7;
+  }
+
+  .sq-orgchart-widget__tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sq-orgchart-widget__connector {
+    width: 2px;
+    height: 32px;
+    background: linear-gradient(180deg, var(--sc-blue, #7A96D6), var(--lavender, #9F83C1));
+  }
+
+  .sq-orgchart-widget__tier {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .sq-orgchart-widget__node {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    color: var(--slate, #0F172A);
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 14px 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+  }
+
+  .sq-orgchart-widget__node span {
+    display: block;
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--slate-soft, #64748B);
+    margin-top: 2px;
+  }
+
+  .sq-orgchart-widget__node:hover,
+  .sq-orgchart-widget__node:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--deca-blue, #0072CE);
+    box-shadow: 0 10px 28px rgba(0, 114, 206, 0.16);
+    outline: none;
+  }
+
+  .sq-orgchart-widget__node--apex {
+    background: var(--deca-blue, #0072CE);
+    color: #fff;
+    border-color: var(--deca-blue, #0072CE);
+    box-shadow: 0 8px 28px rgba(0, 114, 206, 0.25);
+  }
+  .sq-orgchart-widget__node--apex span { color: rgba(255,255,255,0.8); }
+
+  .sq-orgchart-widget__node--region {
+    background: rgba(159, 131, 193, 0.08);
+    border-color: rgba(159, 131, 193, 0.3);
+  }
+
+  .sq-orgchart-widget__node.is-active {
+    border-color: var(--pink, #E55B75);
+    box-shadow: 0 10px 28px rgba(229, 91, 117, 0.2);
+  }
+
+  .sq-orgchart-widget__detail {
+    margin-top: 32px;
+    font-size: 15px;
+    color: var(--slate, #0F172A);
+    min-height: 24px;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (max-width: 700px) {
+    .sq-orgchart-widget__tier { gap: 10px; }
+    .sq-orgchart-widget__node { font-size: 12px; padding: 12px 16px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var nodes = document.querySelectorAll('.sq-orgchart-widget__node');
+    var detail = document.getElementById('sq-orgchart-detail');
+    nodes.forEach(function (node) {
+      node.addEventListener('click', function () {
+        nodes.forEach(function (n) { n.classList.remove('is-active'); });
+        node.classList.add('is-active');
+        detail.style.opacity = 0;
+        setTimeout(function () {
+          detail.textContent = node.getAttribute('data-desc');
+          detail.style.opacity = 1;
+        }, 120);
+      });
+    });
+  })();
+</script>
+
+</div>
+
+  <div class="section bg-soft">
+    <div class="section__inner" style="max-width:760px;">
+      <div class="card card-premium fade-up" style="text-align:center;">
+        <span class="badge badge-gold">State Officer Alumni</span>
+        <h3 style="margin-top:12px;">Decades of Officer Leadership</h3>
+        <p>We're digitizing the State Officer alumni archive year by year. Were you a state officer? Help us fill in the record.</p>
+        <a href="#" class="sqs-block-button-element" data-page-link="get-involved" style="margin-top:18px; display:inline-block;">Share Your Officer Story →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-banner bg-slate">
+    <span class="eyebrow" style="color:var(--gold-warm);">Give Back</span>
+    <h1>Once SC DECA, Always SC DECA.</h1>
+    <p>Judge a competitive event. Mentor a chapter. Come back and invest in the program that invested in you.</p>
+    <a href="#" class="sqs-block-button-element" data-page-link="get-involved" style="margin-top:24px; display:inline-block;">Volunteer as an Alum →</a>
+  </div>
+
+</section>
+
+<!-- ============================== ADVISORS ============================== -->
+<section class="page" id="page-advisors">
+
+  <div class="page-banner bg-sunset-gradient">
+    <span class="eyebrow">For Chapter Advisors</span>
+    <h1>Everything You Need to Run Your Chapter</h1>
+    <p>Administrative tools, conference guides, and prep checklists — built for teachers managing an active chapter, not corporate training.</p>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">Advisor Resources Central</span>
+        <h2>Direct Files &amp; Checklists</h2>
+      </div>
+      <div class="grid-4">
+        <div class="card fade-up">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+          <h3>New Advisor Starter Kit</h3>
+          <p>Onboarding guide for first-year chapter advisors.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">Download →</a>
+        </div>
+        <div class="card fade-up fade-up-delay-1">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          <h3>Chapter Calendar Template</h3>
+          <p>Editable year-at-a-glance planning calendar.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">Download →</a>
+        </div>
+        <div class="card fade-up fade-up-delay-2">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
+          <h3>Membership Registration Guide</h3>
+          <p>Step-by-step for registering students in the DECA system.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">Download →</a>
+        </div>
+        <div class="card fade-up fade-up-delay-3">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <h3>Conference Travel Guide</h3>
+          <p>Lodging, transportation, and chaperone planning reference.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">Download →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+<!--
+  SC DECA — SCDC Advisor Prep Checklist (Advisors page)
+  Drop into a Code Block under "Advisor Resources Central."
+  Progress persists per-browser via localStorage so an advisor can
+  leave and come back during registration season without losing
+  their place. Self-contained — own scoped class, no dependencies.
+-->
+<div class="sq-advisorchecklist-widget">
+  <div class="sq-advisorchecklist-widget__head">
+    <span class="sq-advisorchecklist-widget__eyebrow">Advisor Roadmap</span>
+    <h2 class="sq-advisorchecklist-widget__title">SCDC Advisor Prep Checklist</h2>
+    <p class="sq-advisorchecklist-widget__sub">Everything you need to register your chapter for the State Career Development Conference, in order.</p>
+  </div>
+
+  <div class="sq-advisorchecklist-widget__progress">
+    <div class="sq-advisorchecklist-widget__progress-bar"><div class="sq-advisorchecklist-widget__progress-fill" id="sq-advchk-fill"></div></div>
+    <span id="sq-advchk-count">0 of 7 complete</span>
+  </div>
+
+  <ul class="sq-advisorchecklist-widget__list" id="sq-advchk-list">
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="1">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Confirm chapter membership roster</strong> — verify every competing student is registered in DECA's membership system before the state deadline.</span>
+      </label>
+    </li>
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="2">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Select competitive events</strong> — work with each student to lock in their event based on the Competition Matcher results or their classroom focus.</span>
+      </label>
+    </li>
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="3">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Submit SCDC registration</strong> — complete the state conference registration form and pay chapter fees before the posted cutoff.</span>
+      </label>
+    </li>
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="4">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Collect chaperone &amp; medical forms</strong> — gather signed permission slips and emergency contact info for every traveling student.</span>
+      </label>
+    </li>
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="5">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Book travel &amp; lodging</strong> — reserve hotel blocks and transportation early; conference-week rates fill up fast.</span>
+      </label>
+    </li>
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="6">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Run a chapter practice round</strong> — schedule at least one mock roleplay or exam session before departure.</span>
+      </label>
+    </li>
+    <li class="sq-advisorchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="7">
+        <span class="sq-advisorchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-advisorchecklist-widget__text"><strong>Pack chapter materials</strong> — bring registration confirmations, membership cards, and chapter banner for check-in.</span>
+      </label>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .sq-advisorchecklist-widget {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .sq-advisorchecklist-widget__head { text-align: center; margin-bottom: 32px; }
+
+  .sq-advisorchecklist-widget__eyebrow {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--deca-blue, #0072CE);
+  }
+
+  .sq-advisorchecklist-widget__title {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    color: var(--slate, #0F172A);
+    margin: 8px 0;
+  }
+
+  .sq-advisorchecklist-widget__sub { color: var(--slate-soft, #64748B); line-height: 1.7; }
+
+  .sq-advisorchecklist-widget__progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .sq-advisorchecklist-widget__progress-bar {
+    flex: 1;
+    height: 10px;
+    border-radius: 999px;
+    background: #E2E8F0;
+    overflow: hidden;
+  }
+
+  .sq-advisorchecklist-widget__progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--deca-blue, #0072CE), var(--sc-blue, #7A96D6));
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  #sq-advchk-count {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--slate-soft, #64748B);
+    white-space: nowrap;
+  }
+
+  .sq-advisorchecklist-widget__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+
+  .sq-advisorchecklist-widget__item {
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sq-advisorchecklist-widget__item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+  }
+
+  .sq-advisorchecklist-widget__item input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+  .sq-advisorchecklist-widget__check {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    border-radius: 8px;
+    border: 2px solid #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .sq-advisorchecklist-widget__check::after {
+    content: '';
+    width: 11px;
+    height: 8px;
+    border-left: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .sq-advisorchecklist-widget__item input:checked + .sq-advisorchecklist-widget__check {
+    background: var(--deca-blue, #0072CE);
+    border-color: var(--deca-blue, #0072CE);
+    transform: scale(1.05);
+  }
+  .sq-advisorchecklist-widget__item input:checked + .sq-advisorchecklist-widget__check::after { transform: rotate(-45deg) scale(1); }
+
+  .sq-advisorchecklist-widget__item input:focus-visible + .sq-advisorchecklist-widget__check {
+    outline: 2px solid var(--deca-blue, #0072CE);
+    outline-offset: 2px;
+  }
+
+  .sq-advisorchecklist-widget__text { font-size: 15px; line-height: 1.6; color: var(--slate, #0F172A); }
+  .sq-advisorchecklist-widget__text strong { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; }
+
+  .sq-advisorchecklist-widget__item.is-done {
+    border-color: rgba(0, 114, 206, 0.3);
+    background: rgba(0, 114, 206, 0.04);
+  }
+  .sq-advisorchecklist-widget__item.is-done .sq-advisorchecklist-widget__text { color: var(--slate-soft, #64748B); text-decoration: line-through; text-decoration-color: #CBD5E1; }
+</style>
+
+<script>
+  (function () {
+    var STORAGE_KEY = 'scdeca-advisor-checklist';
+    var list = document.getElementById('sq-advchk-list');
+    var fill = document.getElementById('sq-advchk-fill');
+    var count = document.getElementById('sq-advchk-count');
+    var checkboxes = list.querySelectorAll('input[type="checkbox"]');
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+      catch (e) {}
+    }
+
+    function render() {
+      var state = loadState();
+      var done = 0;
+      checkboxes.forEach(function (box) {
+        var step = box.getAttribute('data-step');
+        var checked = !!state[step];
+        box.checked = checked;
+        box.closest('.sq-advisorchecklist-widget__item').classList.toggle('is-done', checked);
+        if (checked) done++;
+      });
+      fill.style.width = (done / checkboxes.length * 100) + '%';
+      count.textContent = done + ' of ' + checkboxes.length + ' complete';
+    }
+
+    checkboxes.forEach(function (box) {
+      box.addEventListener('change', function () {
+        var state = loadState();
+        state[box.getAttribute('data-step')] = box.checked;
+        saveState(state);
+        render();
+      });
+    });
+
+    render();
+  })();
+</script>
+
+</div>
+
+</section>
+
+<!-- ============================== CHAPTER MANAGEMENT ============================== -->
+<section class="page" id="page-chapter-management">
+
+  <div class="page-banner bg-sunset-gradient">
+    <span class="eyebrow">Run a Stronger Chapter</span>
+    <h1>Chapter Management, Handled.</h1>
+    <p>Fundraising playbooks, marketing materials, and the toolkit every chapter — new or established — needs to operate well.</p>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">Chapter Resources Portal</span>
+        <h2>Everything to Run Chapter Operations</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card fade-up">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+          <h3>Fundraising Resources</h3>
+          <p>Best practices and templates for student-led funding campaigns.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">View Resources →</a>
+        </div>
+        <div class="card fade-up fade-up-delay-1">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11l15-5v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+          <h3>Marketing Guide</h3>
+          <p>Recruitment materials to grow chapter membership.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">View Resources →</a>
+        </div>
+        <div class="card fade-up fade-up-delay-2">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+          <h3>SBE Accelerator</h3>
+          <p>Toolkit for launching/running a School-Based Enterprise (school store).</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">View Resources →</a>
+        </div>
+        <div class="card fade-up">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></span>
+          <h3>Sponsorship Packages</h3>
+          <p>Ready-to-send templates for securing local business sponsors.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">View Resources →</a>
+        </div>
+        <div class="card fade-up fade-up-delay-1">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2.1-2.1z"/></svg></span>
+          <h3>Chapter Toolkit</h3>
+          <p>Starter resource bundle for brand-new chapters.</p>
+          <a href="#" class="card-link" style="color:var(--deca-blue);">View Resources →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section__inner">
+      <div class="section__head">
+        <h2>What Chapters Are Doing</h2>
+      </div>
+      <div class="card card-premium fade-up" style="max-width:680px; margin:0 auto 48px; text-align:center;">
+        <span class="icon-tile" aria-hidden="true" style="background:rgba(229,91,117,0.12);"><svg viewBox="0 0 24 24" style="stroke:var(--pink);"><polygon points="12 2 15.1 8.6 22 9.3 17 14.1 18.2 21 12 17.6 5.8 21 7 14.1 2 9.3 8.9 8.6"/></svg></span>
+        <h3 style="margin-top:4px;">This Spotlight Is Open</h3>
+        <p style="max-width:480px; margin:8px auto 0;">Every month we feature one South Carolina chapter doing standout work — a fundraiser that overdelivered, a community project, a competitive sweep. Tell us what your chapter pulled off and you could be the first one featured here.</p>
+      </div>
+    </div>
+    <div class="section__inner">
+<!--
+  SC DECA — Chapter Spotlight Submission Form (Chapter Management page)
+  Drop into a Code Block under "Chapter Spotlight."
+
+  IMPORTANT — backend note: Squarespace code blocks cannot process a
+  raw <form> submission; there's no server behind this markup. The
+  <form action="REPLACE_WITH_ENDPOINT"> below is a placeholder. Before
+  this goes live, either:
+    (a) point the action at a form-handling service (e.g. Formspree,
+        Basin) and keep this exact UI, or
+    (b) rebuild this as a native Squarespace Form Block, copying the
+        field list and styling hooks (.form-wrapper input/select/
+        textarea rules already live in squarespace-custom.css).
+  The client-side validation/UX below works either way.
+-->
+<div class="sq-spotlightform-widget">
+  <div class="sq-spotlightform-widget__head">
+    <span class="sq-spotlightform-widget__eyebrow">Chapter Spotlight</span>
+    <h2 class="sq-spotlightform-widget__title">Tell Us What Your Chapter Did</h2>
+    <p class="sq-spotlightform-widget__sub">Fundraisers, community service, competition wins — submit your chapter's news and you could be featured here next month.</p>
+  </div>
+
+  <form class="sq-spotlightform-widget__form" id="sq-spotlight-form" action="REPLACE_WITH_FORM_ENDPOINT" method="POST">
+    <div class="sq-spotlightform-widget__row">
+      <label>
+        Chapter / School Name
+        <input type="text" name="chapter_name" required>
+      </label>
+      <label>
+        Advisor Name
+        <input type="text" name="advisor_name" required>
+      </label>
+    </div>
+    <div class="sq-spotlightform-widget__row">
+      <label>
+        Advisor Email
+        <input type="email" name="advisor_email" required>
+      </label>
+      <label>
+        Region
+        <select name="region" required>
+          <option value="" disabled selected>Select region</option>
+          <option>Upstate</option>
+          <option>Midlands</option>
+          <option>Lowcountry</option>
+          <option>Pee Dee</option>
+        </select>
+      </label>
+    </div>
+    <label class="sq-spotlightform-widget__full">
+      What happened?
+      <textarea name="story" rows="5" required placeholder="Tell us about the fundraiser, service project, or win — who was involved and what made it stand out."></textarea>
+    </label>
+    <label class="sq-spotlightform-widget__full">
+      Photo link (optional)
+      <input type="url" name="photo_url" placeholder="Link to a Google Drive/Photos folder">
+    </label>
+
+    <button type="submit" class="sq-spotlightform-widget__submit">Submit Chapter News</button>
+    <p class="sq-spotlightform-widget__success" id="sq-spotlight-success" role="status">Thanks! Your chapter's story is in the queue for review.</p>
+  </form>
+</div>
+
+<style>
+  .sq-spotlightform-widget {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .sq-spotlightform-widget__head { text-align: center; margin-bottom: 28px; }
+
+  .sq-spotlightform-widget__eyebrow {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pink, #E55B75);
+  }
+
+  .sq-spotlightform-widget__title {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    color: var(--slate, #0F172A);
+    margin: 8px 0;
+  }
+
+  .sq-spotlightform-widget__sub { color: var(--slate-soft, #64748B); line-height: 1.7; }
+
+  .sq-spotlightform-widget__form {
+    background: #fff;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .sq-spotlightform-widget__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .sq-spotlightform-widget__form label,
+  .sq-spotlightform-widget__full {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--slate, #0F172A);
+  }
+
+  .sq-spotlightform-widget__form input,
+  .sq-spotlightform-widget__form select,
+  .sq-spotlightform-widget__form textarea {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    font-weight: 400;
+    font-size: 15px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--slate, #0F172A);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sq-spotlightform-widget__form input:focus,
+  .sq-spotlightform-widget__form select:focus,
+  .sq-spotlightform-widget__form textarea:focus {
+    outline: none;
+    border-color: var(--deca-blue, #0072CE);
+    box-shadow: 0 0 0 3px rgba(0, 114, 206, 0.15);
+  }
+
+  .sq-spotlightform-widget__submit {
+    align-self: flex-start;
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    background: var(--deca-blue, #0072CE);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    cursor: pointer;
+    box-shadow: 0 8px 28px rgba(0, 114, 206, 0.18);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.2s ease;
+  }
+  .sq-spotlightform-widget__submit:hover { transform: translateY(-2px); background: var(--deca-blue-dark, #00529A); box-shadow: 0 14px 32px rgba(0, 114, 206, 0.28); }
+  .sq-spotlightform-widget__submit:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 3px; }
+
+  .sq-spotlightform-widget__success {
+    display: none;
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    font-weight: 600;
+    color: var(--deca-blue-dark, #00529A);
+    background: rgba(0, 114, 206, 0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .sq-spotlightform-widget__success.is-visible { display: block; }
+
+  @media (max-width: 600px) {
+    .sq-spotlightform-widget__row { grid-template-columns: 1fr; }
+    .sq-spotlightform-widget__form { padding: 22px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var form = document.getElementById('sq-spotlight-form');
+    var success = document.getElementById('sq-spotlight-success');
+    form.addEventListener('submit', function (e) {
+      // Client-side UX only. Remove this preventDefault once the
+      // action endpoint above is wired to a real form handler.
+      if (form.getAttribute('action') === 'REPLACE_WITH_FORM_ENDPOINT') {
+        e.preventDefault();
+        success.classList.add('is-visible');
+        form.reset();
+      }
+    });
+  })();
+</script>
+
+</div>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">From Those Who've Done It</span>
+        <h2>Alumni Advice</h2>
+      </div>
+      <div class="grid-2" style="max-width:900px; margin:0 auto;">
+        <div class="card card-premium fade-up">
+          <blockquote>"The biggest thing that kept our chapter alive was treating fundraising like a real campaign, not a one-off bake sale."<cite>On chapter fundraising</cite></blockquote>
+        </div>
+        <div class="card card-premium fade-up fade-up-delay-1">
+          <blockquote>"Don't wait until February to start SCDC prep. The chapters that start in September walk in calm."<cite>On competition prep</cite></blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== COMPETITION PREP ============================== -->
+<section class="page" id="page-competition-prep">
+
+  <div class="page-banner bg-sunset-gradient">
+    <span class="eyebrow">Interactive Prep</span>
+    <h1>Get Ready to Compete.</h1>
+    <p>Find your event, practice real scenarios, and track your prep — all in one place.</p>
+  </div>
+
+  <div class="section bg-soft">
+<!--
+  SC DECA — Competition Matcher Quiz (Competition Preparation page)
+  Drop into a Code Block near the top of the page. 5 multiple-choice
+  questions, each option tagged to one of the four career clusters
+  (Marketing / Finance / Hospitality / Management). Tally happens
+  client-side; whichever cluster gets the most picks wins, ties are
+  broken by the order the student answered (first cluster to reach
+  the max stays on top). Self-contained, no dependencies.
+-->
+<div class="sq-quiz-widget">
+  <div class="sq-quiz-widget__head">
+    <span class="sq-quiz-widget__eyebrow">Find Your Event</span>
+    <h2 class="sq-quiz-widget__title">Competition Matcher</h2>
+    <p class="sq-quiz-widget__sub">Five quick questions to point you toward the DECA competitive events that fit how you actually think.</p>
+  </div>
+
+  <form id="sq-quiz-form" class="sq-quiz-widget__form">
+    <div class="sq-quiz-widget__progress">
+      <div class="sq-quiz-widget__progress-bar"><div class="sq-quiz-widget__progress-fill" id="sq-quiz-fill"></div></div>
+      <span id="sq-quiz-step-label">Question 1 of 5</span>
+    </div>
+
+    <fieldset class="sq-quiz-widget__question" data-q="1">
+      <legend>What energizes you most in a group project?</legend>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q1" value="marketing"><span>Coming up with the ad campaign or big idea</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q1" value="finance"><span>Tracking the budget and making the numbers work</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q1" value="hospitality"><span>Making sure everyone feels welcomed and taken care of</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q1" value="management"><span>Organizing the team and keeping everyone on schedule</span></label>
+    </fieldset>
+
+    <fieldset class="sq-quiz-widget__question" data-q="2" hidden>
+      <legend>Pick a dream internship:</legend>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q2" value="marketing"><span>Social media coordinator for a local brand</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q2" value="finance"><span>Analyst at an investment or banking firm</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q2" value="hospitality"><span>Front desk lead at a boutique hotel</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q2" value="management"><span>Assistant manager at a growing retail store</span></label>
+    </fieldset>
+
+    <fieldset class="sq-quiz-widget__question" data-q="3" hidden>
+      <legend>Which class do you actually look forward to?</legend>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q3" value="marketing"><span>Graphic design or advertising</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q3" value="finance"><span>Accounting or personal finance</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q3" value="hospitality"><span>Culinary, hospitality, or tourism</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q3" value="management"><span>Business management or leadership</span></label>
+    </fieldset>
+
+    <fieldset class="sq-quiz-widget__question" data-q="4" hidden>
+      <legend>A friend's lemonade stand isn't making money. What's your advice?</legend>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q4" value="marketing"><span>"Your sign and branding aren't grabbing attention"</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q4" value="finance"><span>"You're not tracking costs versus profit"</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q4" value="hospitality"><span>"Make the experience better for people waiting in line"</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q4" value="management"><span>"You need a clear plan for who does what"</span></label>
+    </fieldset>
+
+    <fieldset class="sq-quiz-widget__question" data-q="5" hidden>
+      <legend>In 10 years, where do you see yourself?</legend>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q5" value="marketing"><span>Running campaigns at an agency or brand</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q5" value="finance"><span>Working in banking, investing, or corporate finance</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q5" value="hospitality"><span>Managing a restaurant, hotel, or event venue</span></label>
+      <label class="sq-quiz-widget__option"><input type="radio" name="q5" value="management"><span>Leading a team or running my own business</span></label>
+    </fieldset>
+
+    <div class="sq-quiz-widget__nav">
+      <button type="button" id="sq-quiz-back" class="sq-quiz-widget__btn sq-quiz-widget__btn--ghost" hidden>Back</button>
+      <button type="button" id="sq-quiz-next" class="sq-quiz-widget__btn" disabled>Next</button>
+    </div>
+  </form>
+
+  <div class="sq-quiz-widget__result" id="sq-quiz-result" hidden>
+    <span class="sq-quiz-widget__result-badge" id="sq-quiz-result-badge"></span>
+    <h3 id="sq-quiz-result-title"></h3>
+    <p id="sq-quiz-result-copy"></p>
+    <p class="sq-quiz-widget__result-events"><strong>Try these events:</strong> <span id="sq-quiz-result-events"></span></p>
+    <button type="button" id="sq-quiz-retake" class="sq-quiz-widget__btn sq-quiz-widget__btn--ghost">Retake Quiz</button>
+  </div>
+</div>
+
+<style>
+  .sq-quiz-widget { font-family: var(--font-body, 'Source Sans Pro', sans-serif); max-width: 640px; margin: 0 auto; }
+
+  .sq-quiz-widget__head { text-align: center; margin-bottom: 28px; }
+  .sq-quiz-widget__eyebrow { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--pink, #E55B75); }
+  .sq-quiz-widget__title { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 900; letter-spacing: -0.03em; font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--slate, #0F172A); margin: 8px 0; }
+  .sq-quiz-widget__sub { color: var(--slate-soft, #64748B); line-height: 1.7; }
+
+  .sq-quiz-widget__form { background: #fff; border-radius: 20px; padding: 32px; box-shadow: 0 12px 40px rgba(15,23,42,0.10); }
+
+  .sq-quiz-widget__progress { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .sq-quiz-widget__progress-bar { flex: 1; height: 8px; border-radius: 999px; background: #E2E8F0; overflow: hidden; }
+  .sq-quiz-widget__progress-fill { height: 100%; width: 20%; border-radius: 999px; background: var(--sunset-gradient, linear-gradient(135deg,#9F83C1,#E55B75,#ECC085)); transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  #sq-quiz-step-label { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 12px; color: var(--slate-soft, #64748B); white-space: nowrap; }
+
+  .sq-quiz-widget__question legend { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 800; font-size: 18px; color: var(--slate, #0F172A); margin-bottom: 16px; padding: 0; }
+
+  .sq-quiz-widget__option { display: flex; align-items: center; gap: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+  .sq-quiz-widget__option:hover { border-color: var(--sc-blue, #7A96D6); transform: translateX(2px); }
+  .sq-quiz-widget__option input { accent-color: var(--deca-blue, #0072CE); width: 18px; height: 18px; flex-shrink: 0; }
+  .sq-quiz-widget__option input:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 2px; }
+  .sq-quiz-widget__option:has(input:checked) { border-color: var(--deca-blue, #0072CE); background: rgba(0,114,206,0.05); }
+  .sq-quiz-widget__option span { font-size: 15px; color: var(--slate, #0F172A); }
+
+  .sq-quiz-widget__nav { display: flex; justify-content: space-between; margin-top: 20px; }
+
+  .sq-quiz-widget__btn { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 14px; color: #fff; background: var(--deca-blue, #0072CE); border: none; border-radius: 10px; padding: 13px 26px; cursor: pointer; box-shadow: 0 8px 28px rgba(0,114,206,0.18); transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, opacity 0.2s ease; margin-left: auto; }
+  .sq-quiz-widget__btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,114,206,0.28); }
+  .sq-quiz-widget__btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  .sq-quiz-widget__btn:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 3px; }
+  .sq-quiz-widget__btn--ghost { background: transparent; color: var(--deca-blue, #0072CE); box-shadow: none; border: 1.5px solid var(--deca-blue, #0072CE); margin-left: 0; }
+  .sq-quiz-widget__btn--ghost:hover { background: rgba(0,114,206,0.06); }
+
+  .sq-quiz-widget__result { text-align: center; background: #fff; border-radius: 20px; padding: 40px 32px; box-shadow: 0 12px 40px rgba(15,23,42,0.10); animation: sq-quiz-fade-up 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes sq-quiz-fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .sq-quiz-widget__result-badge { display: inline-block; font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; margin-bottom: 16px; }
+  .sq-quiz-widget__result h3 { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 900; letter-spacing: -0.03em; font-size: clamp(1.6rem, 3vw, 2.1rem); color: var(--slate, #0F172A); margin: 0 0 12px; }
+  .sq-quiz-widget__result p { color: var(--slate-soft, #64748B); line-height: 1.7; max-width: 460px; margin: 0 auto 8px; }
+  .sq-quiz-widget__result-events { color: var(--slate, #0F172A) !important; }
+  .sq-quiz-widget__result .sq-quiz-widget__btn--ghost { margin: 24px auto 0; }
+
+  @media (max-width: 600px) {
+    .sq-quiz-widget__form, .sq-quiz-widget__result { padding: 24px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var QUESTIONS = [1, 2, 3, 4, 5];
+    var current = 0;
+    var form = document.getElementById('sq-quiz-form');
+    var fields = form.querySelectorAll('.sq-quiz-widget__question');
+    var fill = document.getElementById('sq-quiz-fill');
+    var stepLabel = document.getElementById('sq-quiz-step-label');
+    var nextBtn = document.getElementById('sq-quiz-next');
+    var backBtn = document.getElementById('sq-quiz-back');
+    var resultEl = document.getElementById('sq-quiz-result');
+
+    var RESULTS = {
+      marketing: {
+        title: 'Marketing',
+        color: { bg: 'rgba(229,91,117,0.12)', text: '#E55B75' },
+        copy: "You think in campaigns, hooks, and audiences. You'd thrive pitching ideas that make a brand impossible to ignore.",
+        events: 'Marketing Management, Sports & Entertainment Marketing, Apparel and Accessories Marketing'
+      },
+      finance: {
+        title: 'Finance',
+        color: { bg: 'rgba(0,114,206,0.10)', text: '#00529A' },
+        copy: "You're the one who actually reads the fine print and makes the numbers tell a story. Precision is your edge.",
+        events: 'Financial Services Team Decision Making, Accounting Applications, Business Finance Series'
+      },
+      hospitality: {
+        title: 'Hospitality & Tourism',
+        color: { bg: 'rgba(242,157,130,0.18)', text: '#C2613F' },
+        copy: "You read a room instantly and make people feel taken care of — that's the whole game in hospitality.",
+        events: 'Hotel and Lodging Management, Restaurant and Food Service Management, Travel and Tourism Team Decision Making'
+      },
+      management: {
+        title: 'Business Management & Administration',
+        color: { bg: 'rgba(159,131,193,0.14)', text: '#6B4F8C' },
+        copy: "You naturally organize chaos into a plan and keep a team moving. Leadership roles suit you.",
+        events: 'Principles of Business Management, Human Resources Management Series, Business Law and Ethics Team Decision Making'
+      }
+    };
+
+    function currentField() { return fields[current]; }
+
+    function updateProgress() {
+      fill.style.width = ((current + 1) / QUESTIONS.length * 100) + '%';
+      stepLabel.textContent = 'Question ' + (current + 1) + ' of ' + QUESTIONS.length;
+    }
+
+    function isAnswered(field) {
+      return !!field.querySelector('input:checked');
+    }
+
+    function showField(index) {
+      fields.forEach(function (f, i) { f.hidden = i !== index; });
+      backBtn.hidden = index === 0;
+      nextBtn.textContent = index === QUESTIONS.length - 1 ? 'See My Result' : 'Next';
+      nextBtn.disabled = !isAnswered(fields[index]);
+      updateProgress();
+    }
+
+    fields.forEach(function (field) {
+      field.addEventListener('change', function () {
+        nextBtn.disabled = !isAnswered(field);
+      });
+    });
+
+    backBtn.addEventListener('click', function () {
+      if (current > 0) { current--; showField(current); }
+    });
+
+    nextBtn.addEventListener('click', function () {
+      if (!isAnswered(currentField())) return;
+      if (current < QUESTIONS.length - 1) {
+        current++;
+        showField(current);
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      var tally = { marketing: 0, finance: 0, hospitality: 0, management: 0 };
+      var order = [];
+      fields.forEach(function (field) {
+        var checked = field.querySelector('input:checked');
+        if (checked) {
+          tally[checked.value]++;
+          if (order.indexOf(checked.value) === -1) order.push(checked.value);
+        }
+      });
+
+      var winner = order[0];
+      order.forEach(function (key) {
+        if (tally[key] > tally[winner]) winner = key;
+      });
+
+      var result = RESULTS[winner];
+      var badge = document.getElementById('sq-quiz-result-badge');
+      badge.textContent = result.title;
+      badge.style.background = result.color.bg;
+      badge.style.color = result.color.text;
+      document.getElementById('sq-quiz-result-title').textContent = 'You\'re a ' + result.title + ' natural.';
+      document.getElementById('sq-quiz-result-copy').textContent = result.copy;
+      document.getElementById('sq-quiz-result-events').textContent = result.events;
+
+      form.hidden = true;
+      resultEl.hidden = false;
+    }
+
+    document.getElementById('sq-quiz-retake').addEventListener('click', function () {
+      form.reset();
+      current = 0;
+      showField(0);
+      form.hidden = false;
+      resultEl.hidden = true;
+    });
+
+    showField(0);
+  })();
+</script>
+
+</div>
+  <div class="section">
+<!--
+  SC DECA — Roleplay "Scenario of the Day" Widget (Competition Preparation page)
+  Drop into a Code Block on Competition Prep, below the quiz.
+
+  Picks one scenario from the bank below deterministically by day-of-year,
+  so every visitor sees the same "today's" scenario and it rotates daily
+  without a backend. Card flips to reveal approach tips; KPI chips expand
+  inline when tapped. Self-contained, no dependencies.
+-->
+<div class="sq-scenario-widget">
+  <div class="sq-scenario-widget__head">
+    <span class="sq-scenario-widget__eyebrow">Daily Roleplay Practice</span>
+    <h2 class="sq-scenario-widget__title">Scenario of the Day</h2>
+    <p class="sq-scenario-widget__sub">A new business challenge every day. Read it, think through the KPIs, then flip the card for an approach tip.</p>
+  </div>
+
+  <div class="sq-scenario-widget__card" id="sq-scenario-card">
+    <div class="sq-scenario-widget__card-inner" id="sq-scenario-inner">
+      <div class="sq-scenario-widget__face sq-scenario-widget__face--front">
+        <span class="sq-scenario-widget__badge" id="sq-scenario-cluster"></span>
+        <h3 id="sq-scenario-title"></h3>
+        <p id="sq-scenario-prompt"></p>
+
+        <div class="sq-scenario-widget__kpis">
+          <span class="sq-scenario-widget__kpis-label">Performance Indicators — tap to reveal</span>
+          <div class="sq-scenario-widget__chips" id="sq-scenario-chips"></div>
+        </div>
+
+        <button type="button" class="sq-scenario-widget__flip-btn" id="sq-scenario-flip">Flip for Approach Tip ↻</button>
+      </div>
+
+      <div class="sq-scenario-widget__face sq-scenario-widget__face--back">
+        <span class="sq-scenario-widget__badge sq-scenario-widget__badge--back">Approach It Like This</span>
+        <p id="sq-scenario-tip"></p>
+        <button type="button" class="sq-scenario-widget__flip-btn sq-scenario-widget__flip-btn--light" id="sq-scenario-flip-back">Back to Scenario ↻</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sq-scenario-widget { font-family: var(--font-body, 'Source Sans Pro', sans-serif); max-width: 640px; margin: 0 auto; }
+
+  .sq-scenario-widget__head { text-align: center; margin-bottom: 28px; }
+  .sq-scenario-widget__eyebrow { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--lavender, #9F83C1); }
+  .sq-scenario-widget__title { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 900; letter-spacing: -0.03em; font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--slate, #0F172A); margin: 8px 0; }
+  .sq-scenario-widget__sub { color: var(--slate-soft, #64748B); line-height: 1.7; }
+
+  .sq-scenario-widget__card { perspective: 1600px; }
+  .sq-scenario-widget__card-inner {
+    position: relative;
+    min-height: 420px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .sq-scenario-widget__card-inner.is-flipped { transform: rotateY(180deg); }
+
+  .sq-scenario-widget__face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 22px;
+    padding: 36px;
+    box-shadow: 0 16px 44px rgba(15, 23, 42, 0.14);
+  }
+
+  .sq-scenario-widget__face--front {
+    background: #fff;
+  }
+
+  .sq-scenario-widget__face--back {
+    background-image: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.18) 0%, transparent 45%), linear-gradient(135deg, #9F83C1 0%, #E55B75 55%, #ECC085 100%);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .sq-scenario-widget__badge {
+    display: inline-block;
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(159,131,193,0.14);
+    color: #6B4F8C;
+    margin-bottom: 16px;
+  }
+  .sq-scenario-widget__badge--back { background: rgba(255,255,255,0.22); color: #fff; align-self: center; }
+
+  .sq-scenario-widget__face--front h3 { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 800; font-size: 1.4rem; color: var(--slate, #0F172A); margin: 0 0 12px; letter-spacing: -0.02em; }
+  .sq-scenario-widget__face--front p { color: var(--slate, #0F172A); line-height: 1.7; margin: 0 0 24px; }
+
+  .sq-scenario-widget__face--back p { color: #fff; font-size: 1.05rem; line-height: 1.7; max-width: 460px; margin: 0 auto 28px; }
+
+  .sq-scenario-widget__kpis-label { display: block; font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate-soft, #64748B); margin-bottom: 10px; }
+
+  .sq-scenario-widget__chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+
+  .sq-scenario-widget__chip {
+    border: 1.5px solid #E2E8F0;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    overflow: hidden;
+  }
+  .sq-scenario-widget__chip:hover { border-color: var(--deca-blue, #0072CE); transform: translateY(-2px); }
+  .sq-scenario-widget__chip:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 2px; }
+
+  .sq-scenario-widget__chip-label { display: block; padding: 10px 14px; font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 13px; color: var(--deca-blue-dark, #00529A); }
+  .sq-scenario-widget__chip-detail { display: block; max-height: 0; overflow: hidden; padding: 0 14px; font-size: 13px; color: var(--slate-soft, #64748B); transition: max-height 0.3s ease, padding 0.3s ease; }
+  .sq-scenario-widget__chip.is-open .sq-scenario-widget__chip-detail { max-height: 120px; padding: 0 14px 12px; }
+  .sq-scenario-widget__chip.is-open { border-color: var(--deca-blue, #0072CE); background: rgba(0,114,206,0.04); }
+
+  .sq-scenario-widget__flip-btn {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    background: var(--deca-blue, #0072CE);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    cursor: pointer;
+    box-shadow: 0 8px 28px rgba(0,114,206,0.18);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+  }
+  .sq-scenario-widget__flip-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,114,206,0.28); }
+  .sq-scenario-widget__flip-btn:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 3px; }
+  .sq-scenario-widget__flip-btn--light { background: rgba(255,255,255,0.94); color: var(--slate, #0F172A); box-shadow: 0 8px 24px rgba(0,0,0,0.18); margin: 0 auto; display: block; }
+
+  @media (max-width: 600px) {
+    .sq-scenario-widget__face { padding: 24px; }
+    .sq-scenario-widget__card-inner { min-height: 480px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var SCENARIOS = [
+      {
+        cluster: 'Marketing',
+        title: 'The Sneaker Drop Nobody Noticed',
+        prompt: 'A local sneaker boutique launched a limited-edition collab online, but sales were flat — most of their audience never even saw the announcement. As their marketing consultant, recommend how they should have promoted the drop.',
+        kpis: [
+          { label: 'Explain promotional channel selection', detail: 'Match the channel to where the target customer actually spends time — for sneakerheads, that\'s probably Instagram and TikTok, not email.' },
+          { label: 'Describe target market characteristics', detail: 'Define the buyer by age, interests, and buying behavior, not just demographics — collectors behave differently than casual shoppers.' },
+          { label: 'Explain the use of social media in promotion', detail: 'Teaser content, countdowns, and influencer seeding build anticipation before the actual launch.' }
+        ],
+        tip: 'Start by naming who the customer actually is, then work backward to the one or two channels that reach them — don\'t try to cover every platform at once.'
+      },
+      {
+        cluster: 'Finance',
+        title: 'The Subscription Box That Ran Out of Cash',
+        prompt: 'A subscription snack box startup has growing sales but keeps running short on cash to pay suppliers. As a financial advisor, explain what\'s likely happening and what they should track.',
+        kpis: [
+          { label: 'Explain the concept of cash flow', detail: 'Profitable on paper doesn\'t mean cash in the bank — money tied up in inventory or unpaid invoices can\'t pay this month\'s bills.' },
+          { label: 'Describe the nature of operating budgets', detail: 'A budget forecasts cash in versus cash out by month, catching shortfalls before they happen.' },
+          { label: 'Discuss the role of finance in business', detail: 'Finance isn\'t just bookkeeping — it\'s making sure growth doesn\'t outpace the company\'s ability to fund it.' }
+        ],
+        tip: 'Walk through the difference between profit and cash flow first — that distinction is almost always the root of the problem in scenarios like this.'
+      },
+      {
+        cluster: 'Hospitality & Tourism',
+        title: 'The Hotel With Great Reviews and Empty Rooms',
+        prompt: 'A boutique hotel has excellent guest reviews but occupancy is dropping every quarter. As a hospitality consultant, advise the general manager on next steps.',
+        kpis: [
+          { label: 'Explain the nature of hospitality marketing', detail: 'Great service doesn\'t sell itself — it needs distribution through OTAs, search, and direct booking incentives.' },
+          { label: 'Describe factors that affect demand', detail: 'Seasonality, local events, and competitor pricing all shift demand — pull data before guessing at a cause.' },
+          { label: 'Explain pricing strategies used in hospitality', detail: 'Dynamic pricing adjusts rates to demand in real time instead of leaving revenue on the table during peak periods.' }
+        ],
+        tip: 'Separate the product problem from the visibility problem — reviews say the product is fine, so dig into where and how the hotel is actually being found and booked.'
+      },
+      {
+        cluster: 'Business Management',
+        title: 'The Team That Keeps Missing Deadlines',
+        prompt: 'A retail store\'s merchandising team consistently misses deadlines for seasonal displays, frustrating the store manager. As a management consultant, recommend how to fix the workflow.',
+        kpis: [
+          { label: 'Explain the concept of organizational structure', detail: 'Unclear ownership of tasks often causes missed deadlines more than lack of effort — map who owns what.' },
+          { label: 'Describe management\'s responsibility to employees', detail: 'Managers need to set clear expectations and give employees the resources/time to meet them, not just hold people accountable after the fact.' },
+          { label: 'Discuss the nature of staffing in human resources management', detail: 'If the team is consistently overloaded, the real fix may be staffing levels, not motivation.' }
+        ],
+        tip: 'Look for a process gap before assuming a people problem — a simple shared timeline with clear owners fixes most "missed deadline" scenarios.'
+      },
+      {
+        cluster: 'Marketing',
+        title: 'The Rebrand That Confused Loyal Customers',
+        prompt: 'A 20-year-old local bakery just rebranded with a modern logo and new packaging, and longtime customers are complaining it "doesn\'t feel like them anymore." Advise the owner.',
+        kpis: [
+          { label: 'Explain the concept of branding', detail: 'A brand is the promise behind the look, not just the logo — changing visuals without communicating why can break trust.' },
+          { label: 'Describe the use of customer relationship management', detail: 'Existing customers are an asset — bring them along with the change instead of surprising them.' },
+          { label: 'Explain the impact of product packaging on customers', detail: 'Packaging carries emotional cues; changing it too fast can feel like a loss of identity even if the product is unchanged.' }
+        ],
+        tip: 'Acknowledge the emotional reaction first, then explain how the brand story is still intact — rebrands succeed when customers understand the "why."'
+      },
+      {
+        cluster: 'Finance',
+        title: 'The Food Truck Deciding Whether to Expand',
+        prompt: 'A popular food truck owner is debating whether to buy a second truck. As a financial consultant, explain how they should evaluate the decision.',
+        kpis: [
+          { label: 'Explain the concept of return on investment', detail: 'Compare the expected profit from the new truck against its total cost, including financing, to see if it\'s worth it.' },
+          { label: 'Describe types of business risk', detail: 'A second truck adds staffing, maintenance, and demand risk that a single truck doesn\'t carry.' },
+          { label: 'Discuss the nature of capital budgeting decisions', detail: 'Big purchases should be evaluated against multiple scenarios (best case, worst case) before committing.' }
+        ],
+        tip: 'Frame the decision around the breakeven point — how many extra sales per week does the second truck need to pay for itself?'
+      },
+      {
+        cluster: 'Hospitality & Tourism',
+        title: 'The Tour Company Losing Bookings to Online Reviews',
+        prompt: 'A local walking tour company saw bookings drop after a string of mediocre online reviews, even though most guests rate the actual tour highly in person. Advise the owner.',
+        kpis: [
+          { label: 'Explain the importance of customer feedback', detail: 'Negative reviews carry outsized weight online — responding publicly and fixing root causes matters more than the in-person rating.' },
+          { label: 'Describe the use of reputation management in tourism', detail: 'Actively requesting reviews from happy guests can dilute a few bad ones and reflect the true average experience.' },
+          { label: 'Explain the role of word-of-mouth promotion', detail: 'In tourism, trust signals like reviews often replace traditional advertising entirely.' }
+        ],
+        tip: 'Address the reviews directly and visibly — a thoughtful public response to criticism often matters more to future bookers than the original complaint.'
+      },
+      {
+        cluster: 'Business Management',
+        title: 'The Franchise Struggling to Keep Staff',
+        prompt: 'A fast-casual franchise location has high employee turnover, and new hires barely stay 60 days. As a management consultant, recommend how to address it.',
+        kpis: [
+          { label: 'Explain the nature of employee retention strategies', detail: 'Turnover is expensive to replace — onboarding quality and early feedback loops matter more than pay alone in many cases.' },
+          { label: 'Describe the role of training in businesses', detail: 'Employees who feel unprepared on the job leave faster — a structured first-30-days plan reduces early exits.' },
+          { label: 'Discuss the nature of employee motivation', detail: 'Recognition and a clear growth path retain staff longer than a single pay bump.' }
+        ],
+        tip: 'Ask what happens in an employee\'s first two weeks — most early turnover traces back to a rocky onboarding experience, not the job itself.'
+      }
+    ];
+
+    function dayOfYear(date) {
+      var start = new Date(date.getFullYear(), 0, 0);
+      var diff = date - start;
+      return Math.floor(diff / 86400000);
+    }
+
+    var todayIndex = dayOfYear(new Date()) % SCENARIOS.length;
+    var scenario = SCENARIOS[todayIndex];
+
+    document.getElementById('sq-scenario-cluster').textContent = scenario.cluster;
+    document.getElementById('sq-scenario-title').textContent = scenario.title;
+    document.getElementById('sq-scenario-prompt').textContent = scenario.prompt;
+    document.getElementById('sq-scenario-tip').textContent = scenario.tip;
+
+    var chipsWrap = document.getElementById('sq-scenario-chips');
+    scenario.kpis.forEach(function (kpi) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'sq-scenario-widget__chip';
+      chip.innerHTML = '<span class="sq-scenario-widget__chip-label">' + kpi.label + '</span><span class="sq-scenario-widget__chip-detail">' + kpi.detail + '</span>';
+      chip.addEventListener('click', function () {
+        chip.classList.toggle('is-open');
+      });
+      chipsWrap.appendChild(chip);
+    });
+
+    var inner = document.getElementById('sq-scenario-inner');
+    document.getElementById('sq-scenario-flip').addEventListener('click', function () {
+      inner.classList.add('is-flipped');
+    });
+    document.getElementById('sq-scenario-flip-back').addEventListener('click', function () {
+      inner.classList.remove('is-flipped');
+    });
+  })();
+</script>
+
+</div>
+  <div class="section bg-soft">
+<!--
+  SC DECA — SCDC Student Prep Checklist (Competition Preparation page)
+  Drop into a Code Block near the bottom of Competition Prep, after
+  the quiz and scenario widget. Same interaction pattern as
+  blocks/advisor-checklist.html but scoped independently and written
+  for the student's own prep roadmap rather than the advisor's admin
+  tasks. Progress persists via localStorage.
+-->
+<div class="sq-studentchecklist-widget">
+  <div class="sq-studentchecklist-widget__head">
+    <span class="sq-studentchecklist-widget__eyebrow">Your Roadmap</span>
+    <h2 class="sq-studentchecklist-widget__title">SCDC Student Prep Checklist</h2>
+    <p class="sq-studentchecklist-widget__sub">Your step-by-step path from "I have an event" to walking into Career Development Conference ready.</p>
+  </div>
+
+  <div class="sq-studentchecklist-widget__progress">
+    <div class="sq-studentchecklist-widget__progress-bar"><div class="sq-studentchecklist-widget__progress-fill" id="sq-stuchk-fill"></div></div>
+    <span id="sq-stuchk-count">0 of 6 complete</span>
+  </div>
+
+  <ul class="sq-studentchecklist-widget__list" id="sq-stuchk-list">
+    <li class="sq-studentchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="1">
+        <span class="sq-studentchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-studentchecklist-widget__text"><strong>Confirm your event</strong> — lock in your competitive event with your advisor, using your Competition Matcher result as a starting point.</span>
+      </label>
+    </li>
+    <li class="sq-studentchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="2">
+        <span class="sq-studentchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-studentchecklist-widget__text"><strong>Study your performance indicators</strong> — pull up the official PI list for your event and know what each one means cold.</span>
+      </label>
+    </li>
+    <li class="sq-studentchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="3">
+        <span class="sq-studentchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-studentchecklist-widget__text"><strong>Practice with Scenario of the Day</strong> — work through at least five daily scenarios out loud before the conference.</span>
+      </label>
+    </li>
+    <li class="sq-studentchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="4">
+        <span class="sq-studentchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-studentchecklist-widget__text"><strong>Run a mock roleplay</strong> — present to your advisor or a chapter officer and ask for direct feedback.</span>
+      </label>
+    </li>
+    <li class="sq-studentchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="5">
+        <span class="sq-studentchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-studentchecklist-widget__text"><strong>Prep your conference outfit &amp; materials</strong> — business professional attire, name badge, and any required printed materials.</span>
+      </label>
+    </li>
+    <li class="sq-studentchecklist-widget__item">
+      <label>
+        <input type="checkbox" data-step="6">
+        <span class="sq-studentchecklist-widget__check" aria-hidden="true"></span>
+        <span class="sq-studentchecklist-widget__text"><strong>Know your schedule</strong> — confirm your testing time, roleplay time, and room location the night before.</span>
+      </label>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .sq-studentchecklist-widget {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .sq-studentchecklist-widget__head { text-align: center; margin-bottom: 32px; }
+
+  .sq-studentchecklist-widget__eyebrow {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pink, #E55B75);
+  }
+
+  .sq-studentchecklist-widget__title {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    color: var(--slate, #0F172A);
+    margin: 8px 0;
+  }
+
+  .sq-studentchecklist-widget__sub { color: var(--slate-soft, #64748B); line-height: 1.7; }
+
+  .sq-studentchecklist-widget__progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .sq-studentchecklist-widget__progress-bar {
+    flex: 1;
+    height: 10px;
+    border-radius: 999px;
+    background: #E2E8F0;
+    overflow: hidden;
+  }
+
+  .sq-studentchecklist-widget__progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--pink, #E55B75), var(--gold-warm, #ECC085));
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  #sq-stuchk-count {
+    font-family: var(--font-heading, 'Montserrat', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--slate-soft, #64748B);
+    white-space: nowrap;
+  }
+
+  .sq-studentchecklist-widget__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+
+  .sq-studentchecklist-widget__item {
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sq-studentchecklist-widget__item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+  }
+
+  .sq-studentchecklist-widget__item input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+  .sq-studentchecklist-widget__check {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    border-radius: 8px;
+    border: 2px solid #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .sq-studentchecklist-widget__check::after {
+    content: '';
+    width: 11px;
+    height: 8px;
+    border-left: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .sq-studentchecklist-widget__item input:checked + .sq-studentchecklist-widget__check {
+    background: var(--pink, #E55B75);
+    border-color: var(--pink, #E55B75);
+    transform: scale(1.05);
+  }
+  .sq-studentchecklist-widget__item input:checked + .sq-studentchecklist-widget__check::after { transform: rotate(-45deg) scale(1); }
+
+  .sq-studentchecklist-widget__item input:focus-visible + .sq-studentchecklist-widget__check {
+    outline: 2px solid var(--pink, #E55B75);
+    outline-offset: 2px;
+  }
+
+  .sq-studentchecklist-widget__text { font-size: 15px; line-height: 1.6; color: var(--slate, #0F172A); }
+  .sq-studentchecklist-widget__text strong { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; }
+
+  .sq-studentchecklist-widget__item.is-done {
+    border-color: rgba(229, 91, 117, 0.3);
+    background: rgba(229, 91, 117, 0.04);
+  }
+  .sq-studentchecklist-widget__item.is-done .sq-studentchecklist-widget__text { color: var(--slate-soft, #64748B); text-decoration: line-through; text-decoration-color: #CBD5E1; }
+</style>
+
+<script>
+  (function () {
+    var STORAGE_KEY = 'scdeca-student-checklist';
+    var list = document.getElementById('sq-stuchk-list');
+    var fill = document.getElementById('sq-stuchk-fill');
+    var count = document.getElementById('sq-stuchk-count');
+    var checkboxes = list.querySelectorAll('input[type="checkbox"]');
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+      catch (e) {}
+    }
+
+    function render() {
+      var state = loadState();
+      var done = 0;
+      checkboxes.forEach(function (box) {
+        var step = box.getAttribute('data-step');
+        var checked = !!state[step];
+        box.checked = checked;
+        box.closest('.sq-studentchecklist-widget__item').classList.toggle('is-done', checked);
+        if (checked) done++;
+      });
+      fill.style.width = (done / checkboxes.length * 100) + '%';
+      count.textContent = done + ' of ' + checkboxes.length + ' complete';
+    }
+
+    checkboxes.forEach(function (box) {
+      box.addEventListener('change', function () {
+        var state = loadState();
+        state[box.getAttribute('data-step')] = box.checked;
+        saveState(state);
+        render();
+      });
+    });
+
+    render();
+  })();
+</script>
+
+</div>
+
+  <div class="section">
+    <div class="section__inner" style="max-width:760px;">
+      <div class="card card-premium fade-up" style="text-align:center;">
+        <h3>Need event-specific practice?</h3>
+        <p>Ask your advisor about official DECA practice exams and roleplay guides for your specific competitive event.</p>
+        <a href="#" class="sqs-block-button-element" data-page-link="advisors" style="margin-top:18px; display:inline-block;">Find Your Advisor →</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== GET INVOLVED ============================== -->
+<section class="page" id="page-get-involved">
+
+  <div class="page-banner bg-sunset-gradient">
+    <span class="eyebrow">Beyond Competition</span>
+    <h1>Get Involved With SC DECA</h1>
+    <p>Join the conversation, give back to the community, and stay in the loop year-round.</p>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">Communication Channels</span>
+        <h2>Stay in the Loop</h2>
+      </div>
+      <div class="grid-2" style="max-width:900px; margin:0 auto;">
+        <div class="card comm-card fade-up">
+          <span class="comm-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg></span>
+          <div>
+            <h3>Statewide GroupMe</h3>
+            <p>Real-time updates and chapter-to-chapter chat.</p>
+            <a href="#" class="card-link" style="color:var(--deca-blue);">Join the GroupMe →</a>
+          </div>
+        </div>
+        <div class="card comm-card fade-up fade-up-delay-1">
+          <span class="comm-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
+          <div>
+            <h3>Planning Zoom Calls</h3>
+            <p>Monthly officer and advisor planning sessions.</p>
+            <a href="#" class="card-link" style="color:var(--deca-blue);">See the Schedule →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section__inner progress-block">
+      <span class="eyebrow">#DoItForSCDECA</span>
+      <h2>The Community Service Challenge</h2>
+      <p>Every chapter is challenged to run a community service project this year — a food drive, a fundraiser, a local partnership. Log yours and we'll tally the statewide impact here as projects roll in this fall.</p>
+      <a href="#" class="sqs-block-button-element" data-page-link="chapter-management" style="margin-top:24px; display:inline-block;">Log a Service Project →</a>
+    </div>
+  </div>
+
+  <div class="section bg-soft">
+    <div class="section__inner">
+      <div class="section__head">
+        <span class="eyebrow">The Palmetto Periodical</span>
+        <h2>Our Newsletter Is Launching</h2>
+      </div>
+      <div style="max-width:760px; margin:0 auto;">
+        <div class="card card-premium fade-up" style="text-align:center;">
+          <span class="badge badge-blue">Coming This Fall</span>
+          <h3 style="margin-top:12px;">Student Spotlights, Advisor Tips &amp; Chapter News</h3>
+          <p style="max-width:520px; margin:8px auto 0;">The Palmetto Periodical brings the best of SC DECA together each month — chapter wins, competition advice, and the students behind them. The first edition drops this fall. Want your chapter in it?</p>
+          <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:24px;">
+            <a href="#" class="sqs-block-button-element" data-page-link="chapter-management">Submit a Story →</a>
+            <a href="#" class="sqs-block-button-element sqs-block-button-element--secondary">Tag @scdeca</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+<!--
+  SC DECA — Alumni Volunteer Registry (Get Involved page)
+  Drop into a Code Block under "Alumni Volunteer Registry."
+
+  IMPORTANT — backend note: same as blocks/chapter-spotlight-form.html.
+  Squarespace code blocks have no submission backend. The
+  <form action="REPLACE_WITH_FORM_ENDPOINT"> is a placeholder — wire it
+  to a form-handling service (Formspree, Basin) or rebuild as a native
+  Squarespace Form Block before launch. The role-picker UI/UX here is
+  the part worth preserving either way.
+-->
+<div class="sq-volunteerform-widget">
+  <div class="sq-volunteerform-widget__head">
+    <span class="sq-volunteerform-widget__eyebrow">Give Back</span>
+    <h2 class="sq-volunteerform-widget__title">Alumni Volunteer Registry</h2>
+    <p class="sq-volunteerform-widget__sub">Judge a competitive event, coordinate a conference, or mentor a chapter. Tell us how you want to help.</p>
+  </div>
+
+  <form class="sq-volunteerform-widget__form" id="sq-volunteer-form" action="REPLACE_WITH_FORM_ENDPOINT" method="POST">
+    <div class="sq-volunteerform-widget__roles" role="group" aria-label="Volunteer role">
+      <button type="button" class="sq-volunteerform-widget__role" data-role="judge">
+        <span class="sq-volunteerform-widget__role-title">Judge</span>
+        <span class="sq-volunteerform-widget__role-desc">Evaluate roleplays and exams at SCDC or a regional event.</span>
+      </button>
+      <button type="button" class="sq-volunteerform-widget__role" data-role="coordinator">
+        <span class="sq-volunteerform-widget__role-title">Coordinator</span>
+        <span class="sq-volunteerform-widget__role-desc">Help run event logistics on-site at a state conference.</span>
+      </button>
+      <button type="button" class="sq-volunteerform-widget__role" data-role="mentor">
+        <span class="sq-volunteerform-widget__role-title">Mentor</span>
+        <span class="sq-volunteerform-widget__role-desc">Work directly with a chapter on competition prep year-round.</span>
+      </button>
+    </div>
+    <input type="hidden" name="role" id="sq-volunteer-role-input">
+
+    <div class="sq-volunteerform-widget__row">
+      <label>
+        Full Name
+        <input type="text" name="name" required>
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" required>
+      </label>
+    </div>
+    <div class="sq-volunteerform-widget__row">
+      <label>
+        Graduation Year (if SC DECA alum)
+        <input type="text" name="grad_year" placeholder="e.g. 2014">
+      </label>
+      <label>
+        Current Employer / Industry
+        <input type="text" name="employer">
+      </label>
+    </div>
+    <label class="sq-volunteerform-widget__full">
+      Availability &amp; Notes
+      <textarea name="notes" rows="4" placeholder="Conference dates you're available, areas of expertise, or anything else we should know."></textarea>
+    </label>
+
+    <button type="submit" class="sq-volunteerform-widget__submit" id="sq-volunteer-submit" disabled>Select a role to continue</button>
+    <p class="sq-volunteerform-widget__success" id="sq-volunteer-success" role="status">Thanks for signing up! We'll reach out before the next conference with details.</p>
+  </form>
+</div>
+
+<style>
+  .sq-volunteerform-widget { font-family: var(--font-body, 'Source Sans Pro', sans-serif); max-width: 700px; margin: 0 auto; }
+
+  .sq-volunteerform-widget__head { text-align: center; margin-bottom: 28px; }
+  .sq-volunteerform-widget__eyebrow { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-warm, #ECC085); }
+  .sq-volunteerform-widget__title { font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 900; letter-spacing: -0.03em; font-size: clamp(1.7rem, 3vw, 2.2rem); color: var(--slate, #0F172A); margin: 8px 0; }
+  .sq-volunteerform-widget__sub { color: var(--slate-soft, #64748B); line-height: 1.7; }
+
+  .sq-volunteerform-widget__form { background: #fff; border-radius: 18px; padding: 32px; box-shadow: 0 12px 40px rgba(15,23,42,0.10); display: flex; flex-direction: column; gap: 18px; }
+
+  .sq-volunteerform-widget__roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 8px; }
+
+  .sq-volunteerform-widget__role {
+    text-align: left;
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+  }
+  .sq-volunteerform-widget__role:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15,23,42,0.08); }
+  .sq-volunteerform-widget__role:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 2px; }
+  .sq-volunteerform-widget__role.is-selected { border-color: var(--deca-blue, #0072CE); background: rgba(0,114,206,0.05); box-shadow: 0 10px 28px rgba(0,114,206,0.16); }
+
+  .sq-volunteerform-widget__role-title { display: block; font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 800; font-size: 15px; color: var(--slate, #0F172A); margin-bottom: 6px; }
+  .sq-volunteerform-widget__role-desc { display: block; font-size: 13px; color: var(--slate-soft, #64748B); line-height: 1.5; }
+
+  .sq-volunteerform-widget__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  .sq-volunteerform-widget__form label, .sq-volunteerform-widget__full {
+    display: flex; flex-direction: column; gap: 6px;
+    font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 600; font-size: 13px; color: var(--slate, #0F172A);
+  }
+
+  .sq-volunteerform-widget__form input, .sq-volunteerform-widget__form textarea {
+    font-family: var(--font-body, 'Source Sans Pro', sans-serif); font-weight: 400; font-size: 15px;
+    border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 12px 14px; color: var(--slate, #0F172A);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .sq-volunteerform-widget__form input:focus, .sq-volunteerform-widget__form textarea:focus {
+    outline: none; border-color: var(--deca-blue, #0072CE); box-shadow: 0 0 0 3px rgba(0,114,206,0.15);
+  }
+
+  .sq-volunteerform-widget__submit {
+    align-self: flex-start;
+    font-family: var(--font-heading, 'Montserrat', sans-serif); font-weight: 700; font-size: 15px; color: #fff;
+    background: var(--deca-blue, #0072CE); border: none; border-radius: 10px; padding: 14px 28px; cursor: pointer;
+    box-shadow: 0 8px 28px rgba(0,114,206,0.18);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, opacity 0.2s ease;
+  }
+  .sq-volunteerform-widget__submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,114,206,0.28); }
+  .sq-volunteerform-widget__submit:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+  .sq-volunteerform-widget__submit:focus-visible { outline: 2px solid var(--deca-blue, #0072CE); outline-offset: 3px; }
+
+  .sq-volunteerform-widget__success {
+    display: none; font-family: var(--font-body, 'Source Sans Pro', sans-serif); font-weight: 600;
+    color: var(--deca-blue-dark, #00529A); background: rgba(0,114,206,0.08); border-radius: 10px; padding: 12px 16px;
+  }
+  .sq-volunteerform-widget__success.is-visible { display: block; }
+
+  @media (max-width: 700px) {
+    .sq-volunteerform-widget__roles { grid-template-columns: 1fr; }
+    .sq-volunteerform-widget__row { grid-template-columns: 1fr; }
+    .sq-volunteerform-widget__form { padding: 22px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var roleButtons = document.querySelectorAll('.sq-volunteerform-widget__role');
+    var roleInput = document.getElementById('sq-volunteer-role-input');
+    var submitBtn = document.getElementById('sq-volunteer-submit');
+    var form = document.getElementById('sq-volunteer-form');
+    var success = document.getElementById('sq-volunteer-success');
+
+    roleButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        roleButtons.forEach(function (b) { b.classList.remove('is-selected'); });
+        btn.classList.add('is-selected');
+        roleInput.value = btn.getAttribute('data-role');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign Up as a ' + btn.querySelector('.sq-volunteerform-widget__role-title').textContent;
+      });
+    });
+
+    form.addEventListener('submit', function (e) {
+      if (form.getAttribute('action') === 'REPLACE_WITH_FORM_ENDPOINT') {
+        e.preventDefault();
+        success.classList.add('is-visible');
+        form.reset();
+        roleButtons.forEach(function (b) { b.classList.remove('is-selected'); });
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Select a role to continue';
+      }
+    });
+  })();
+</script>
+
+</div>
+
+</section>
+
+<footer class="site-footer bg-slate">
+  <div class="site-footer__inner">
+    <div>
+      <a href="#" class="brand-wordmark" data-page-link="home" aria-label="SC DECA home" style="margin-bottom:16px;">
+        <span class="brand-wordmark__mark" aria-hidden="true"></span>
+        <span class="brand-wordmark__text">SC <em>DECA</em></span>
+      </a>
+      <p style="color:rgba(255,255,255,0.7); font-size:14px; line-height:1.7; max-width:340px;">Preparing emerging leaders and entrepreneurs in marketing, finance, hospitality, and management since 1943.</p>
+      <p style="color:rgba(255,255,255,0.7); font-size:14px; margin-top:16px;">Tag <strong style="color:var(--gold-warm);">@scdeca</strong> for a chance to be featured!</p>
+      <div class="footer-social-row" style="margin-top:16px;">
+        <a href="#" aria-label="Instagram" title="@sc_deca">IG</a>
+        <a href="#" aria-label="Facebook" title="South Carolina DECA">FB</a>
+        <a href="#" aria-label="TikTok" title="@scdeca">TT</a>
+      </div>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#" data-page-link="home">Home</a></li>
+        <li><a href="#" data-page-link="about">About</a></li>
+        <li><a href="#" data-page-link="advisors">Advisors</a></li>
+        <li><a href="#" data-page-link="chapter-management">Chapter Management</a></li>
+        <li><a href="#" data-page-link="competition-prep">Competition Prep</a></li>
+        <li><a href="#" data-page-link="get-involved">Get Involved</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:info@scdeca.org">info@scdeca.org <em style="opacity:0.6;">(confirm)</em></a></li>
+        <li><a href="#" data-page-link="get-involved">Volunteer / Judge Sign-Up</a></li>
+        <li><a href="#" data-page-link="advisors">Advisor Resources</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <span>© 2026 South Carolina DECA. An Association of Marketing Students.</span>
+    <span>Design system: DECA Blue primary, SC DECA sunset accents.</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    // ---------- Router (preview-only convention, mirrors the showPage idea
+    // referenced in earlier planning — Squarespace does not need this) ----------
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('is-active'); });
+      var target = document.getElementById('page-' + id);
+      if (target) target.classList.add('is-active');
+
+      document.querySelectorAll('.header-nav-item').forEach(function (item) {
+        var link = item.querySelector('a[data-page]');
+        item.classList.toggle('header-nav-item--active', !!link && link.getAttribute('data-page') === id);
+      });
+
+      document.getElementById('main-nav').classList.remove('is-open');
+      window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+      history.replaceState(null, '', '#' + id);
+    }
+    window.showPage = showPage; // exposed for local QA/screenshot tooling only
+
+    document.querySelectorAll('[data-page]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        showPage(link.getAttribute('data-page'));
+      });
+    });
+
+    document.querySelectorAll('[data-page-link]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        showPage(link.getAttribute('data-page-link'));
+      });
+    });
+
+    document.getElementById('nav-toggle').addEventListener('click', function () {
+      document.getElementById('main-nav').classList.toggle('is-open');
+    });
+
+    document.getElementById('what-is-deca-btn').addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('Video pop-up placeholder — wire up the real "What is DECA?" explainer video here.');
+    });
+
+    var initial = (location.hash || '#home').replace('#', '');
+    showPage(initial);
+
+    // React to direct hash navigation too (e.g. typing a URL with #about,
+    // or this preview being driven by an external script/tool).
+    window.addEventListener('hashchange', function () {
+      showPage(location.hash.replace('#', '') || 'home');
+    });
+
+    // ---------- Load every embedded code block, same fetch+re-exec pattern as preview.html ----------
+    document.querySelectorAll('[data-block]').forEach(function (el) {
+      fetch(el.getAttribute('data-block'))
+        .then(function (res) { return res.text(); })
+        .then(function (html) {
+          el.innerHTML = html;
+          el.querySelectorAll('script').forEach(function (oldScript) {
+            var newScript = document.createElement('script');
+            if (oldScript.src) { newScript.src = oldScript.src; }
+            else { newScript.textContent = oldScript.textContent; }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(function (err) {
+          el.innerHTML = '<p style="color:#E55B75;">Failed to load ' + el.getAttribute('data-block') + ': ' + err + '</p>';
+        });
+    });
+  })();
+</script>
+
+</body>
+</html>
