@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SC DECA — Local Design System &amp; Code Block Preview</title>
+
+<!--
+  Local-only QA harness. Not part of the Squarespace deliverable.
+  Loads the same fonts/CSS vars as header-injection.html plus the
+  full squarespace-custom.css, then fetches every code block from
+  /blocks/ and renders it in context so the design system and each
+  interactive widget can be screenshotted before anything is pasted
+  into Squarespace.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="squarespace-custom.css">
+
+<style>
+  body { margin: 0; background: var(--white); }
+
+  .preview-toc {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(248,250,252,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #E2E8F0;
+    padding: 14px 24px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .preview-toc a { color: var(--slate); }
+  .preview-toc a:hover { color: var(--deca-blue); }
+
+  .preview-section {
+    padding: 64px 24px;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .preview-section__label {
+    max-width: 1100px;
+    margin: 0 auto 28px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate-soft);
+  }
+  .preview-section__inner { max-width: 1100px; margin: 0 auto; }
+
+  /* Mockup-only hero to demonstrate the gradient + grain + AA-contrast rule */
+  .preview-hero {
+    border-radius: 28px;
+    padding: 80px 48px;
+    text-align: center;
+  }
+  .preview-hero .eyebrow { display: inline-block; margin-bottom: 8px; }
+  .preview-hero h1 { margin: 0 0 16px; }
+  .preview-hero p { max-width: 540px; margin: 0 auto 32px; font-size: 18px; }
+
+  /* Mockup card grid to demonstrate .card / .grid-3 / shadows */
+  .preview-cardgrid h2 { text-align: center; margin-bottom: 32px; }
+</style>
+</head>
+<body>
+
+<nav class="preview-toc">
+  <a href="#hero">Hero / Gradient</a>
+  <a href="#cards">Card Grid</a>
+  <a href="#sponsors-scroll">Sponsors Scroll</a>
+  <a href="#org-chart">Org Chart</a>
+  <a href="#advisor-checklist">Advisor Checklist</a>
+  <a href="#chapter-spotlight-form">Chapter Spotlight Form</a>
+  <a href="#competition-quiz">Competition Quiz</a>
+  <a href="#scenario-widget">Scenario of the Day</a>
+  <a href="#student-checklist">Student Checklist</a>
+  <a href="#volunteer-form">Volunteer Form</a>
+</nav>
+
+<section class="preview-section" id="hero">
+  <p class="preview-section__label">Design System — Hero / Sunset Gradient</p>
+  <div class="preview-section__inner">
+    <div class="preview-hero bg-sunset-gradient fade-up">
+      <span class="eyebrow">2026-2027 SC DECA Theme</span>
+      <h1>Seize the Moment.</h1>
+      <p>Marketing. Finance. Hospitality. Management. Over 3,000 South Carolina students are building real business skills before they graduate.</p>
+      <a href="#" class="sqs-block-button-element">About SC DECA</a>
+      <a href="#" class="sqs-block-button-element sqs-block-button-element--secondary" style="margin-left:12px;">What is DECA?</a>
+    </div>
+  </div>
+</section>
+
+<section class="preview-section preview-cardgrid" id="cards">
+  <p class="preview-section__label">Design System — Card Grid</p>
+  <div class="preview-section__inner">
+    <h2>Stay Updated</h2>
+    <div class="grid-3">
+      <div class="card card-accent-top fade-up">
+        <span class="badge badge-pink">Students</span>
+        <h3 style="margin-top:12px;">Students Start Here</h3>
+        <p>Find your event, practice roleplays, and prep for SCDC.</p>
+      </div>
+      <div class="card card-accent-top fade-up fade-up-delay-1">
+        <span class="badge badge-blue">Advisors</span>
+        <h3 style="margin-top:12px;">Advisors Start Here</h3>
+        <p>Checklists, fundraising guides, and everything to run your chapter.</p>
+      </div>
+      <div class="card card-accent-top fade-up fade-up-delay-2">
+        <span class="badge badge-gold">Alumni</span>
+        <h3 style="margin-top:12px;">Professionals &amp; Alumni</h3>
+        <p>Judge an event, mentor a chapter, or sponsor the next generation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="preview-section" id="sponsors-scroll">
+  <p class="preview-section__label">Code Block — sponsors-scroll.html (Home)</p>
+  <div class="preview-section__inner" data-block="blocks/sponsors-scroll.html"></div>
+</section>
+
+<section class="preview-section" id="org-chart">
+  <p class="preview-section__label">Code Block — org-chart.html (About)</p>
+  <div class="preview-section__inner" data-block="blocks/org-chart.html"></div>
+</section>
+
+<section class="preview-section" id="advisor-checklist">
+  <p class="preview-section__label">Code Block — advisor-checklist.html (Advisors)</p>
+  <div class="preview-section__inner" data-block="blocks/advisor-checklist.html"></div>
+</section>
+
+<section class="preview-section" id="chapter-spotlight-form">
+  <p class="preview-section__label">Code Block — chapter-spotlight-form.html (Chapter Management)</p>
+  <div class="preview-section__inner" data-block="blocks/chapter-spotlight-form.html"></div>
+</section>
+
+<section class="preview-section" id="competition-quiz">
+  <p class="preview-section__label">Code Block — competition-quiz.html (Competition Prep)</p>
+  <div class="preview-section__inner" data-block="blocks/competition-quiz.html"></div>
+</section>
+
+<section class="preview-section" id="scenario-widget">
+  <p class="preview-section__label">Code Block — scenario-widget.html (Competition Prep)</p>
+  <div class="preview-section__inner" data-block="blocks/scenario-widget.html"></div>
+</section>
+
+<section class="preview-section" id="student-checklist">
+  <p class="preview-section__label">Code Block — student-checklist.html (Competition Prep)</p>
+  <div class="preview-section__inner" data-block="blocks/student-checklist.html"></div>
+</section>
+
+<section class="preview-section" id="volunteer-form">
+  <p class="preview-section__label">Code Block — volunteer-form.html (Get Involved)</p>
+  <div class="preview-section__inner" data-block="blocks/volunteer-form.html"></div>
+</section>
+
+<script>
+  // Fetch each named block and inject it, re-creating <script> tags so
+  // they actually execute (innerHTML insertion alone won't run them).
+  document.querySelectorAll('[data-block]').forEach(function (el) {
+    fetch(el.getAttribute('data-block'))
+      .then(function (res) { return res.text(); })
+      .then(function (html) {
+        el.innerHTML = html;
+        el.querySelectorAll('script').forEach(function (oldScript) {
+          var newScript = document.createElement('script');
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+          } else {
+            newScript.textContent = oldScript.textContent;
+          }
+          oldScript.replaceWith(newScript);
+        });
+      })
+      .catch(function (err) {
+        el.innerHTML = '<p style="color:#E55B75;">Failed to load ' + el.getAttribute('data-block') + ': ' + err + '</p>';
+      });
+  });
+</script>
+</body>
+</html>
